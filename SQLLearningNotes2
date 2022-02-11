@@ -1,0 +1,165 @@
+-- Deleting the data from the table
+-- The comand is as follows
+
+Delete From cats Where name ="egg"; 
+-- before you delete though, you have to check if the data that you are deleting is the real data that
+-- you actually wants to delete
+-- DELETE FROM cats delete everything from the table and the whole table stays with not cats in it.
+DELETE FROM cats WHERE age = 4; -- this delets cats where age is 4
+DELETE FROM cats WHERE cat_Id =age; -- this deletes  from cats table where cat_id = age; 
+DELETE FROM cats; -- this delete everything from the table of the cats
+
+-- exercise about the  shirt inventory
+CREATE DATABASE shirt_inventory; 
+USE shirt_inventory; 
+CREATE TABLE shirt_db(shirt_id INT NOT NULL auto_increment,
+             article VARCHAR(20) NOT NULL,
+             color VARCHAR(20) NOT NULL,
+             shirt_size VARCHAR(20) NOT NULL,
+             last_worn INT NOT NULL,
+             primary key(shirt_id));
+INSERT INTO shirt_db(article,color,shirt_size,last_worn) 
+VALUES ('t-shirt', 'white', 'S', 10),
+('t-shirt', 'green', 'S', 200),
+('polo shirt', 'black', 'M', 10),
+('tank top', 'blue', 'S', 50),
+('t-shirt', 'pink', 'S', 0),
+('polo shirt', 'red', 'M', 5),
+('tank top', 'white', 'S', 200),
+('tank top', 'blue', 'M', 15);
+
+INSERT INTO shirt_db(article,color,shirt_size,last_worn)
+VALUES("polo shirt"," purple", "M", 50); 
+
+-- Questions asked
+-- 1 select all shirts but pring out only articl and color
+ SELECT article,color  from shirt_db;
++------------+---------+
+| article    | color   |
++------------+---------+
+| t-shirt    | white   |
+| t-shirt    | green   |
+| polo shirt | black   |
+| tank top   | blue    |
+| t-shirt    | pink    |
+| polo shirt | red     |
+| tank top   | white   |
+| tank top   | blue    |
+| polo shirt |  purple |
++------------+---------+              
+-- 2 select all medium shirts and print everything except id                    
+
+SELECT article,color,shirt_size, last_worn FROM shirt_db where shirt_size="M";
++------------+---------+------------+-----------+
+| article    | color   | shirt_size | last_worn |
++------------+---------+------------+-----------+
+| polo shirt | black   | M          |        10 |
+| polo shirt | red     | M          |         5 |
+| tank top   | blue    | M          |        15 |
+| polo shirt |  purple | M          |        50 |
++------------+---------+------------+-----------+
+
+-- updata all polo shirt to be size larger size
+
+UPDATE shirt_db  SET shirt_size = "L" WHERE article ="polo shirt";
+Query OK, 3 rows affected (0.04 sec)
+Rows matched: 3  Changed: 3  Warnings: 0
+
+mysql> SELECT*FROM shirt_db;
++----------+------------+---------+------------+-----------+
+| shirt_id | article    | color   | shirt_size | last_worn |
++----------+------------+---------+------------+-----------+
+|        1 | t-shirt    | white   | S          |        10 |
+|        2 | t-shirt    | green   | S          |       200 |
+|        3 | polo shirt | black   | L          |        10 |
+|        4 | tank top   | blue    | S          |        50 |
+|        5 | t-shirt    | pink    | S          |         0 |
+|        6 | polo shirt | red     | L          |         5 |
+|        7 | tank top   | white   | S          |       200 |
+|        8 | tank top   | blue    | M          |        15 |
+|        9 | polo shirt |  purple | L          |        50 |
+
+-- updata the shirt last worn 15 days ago to zero.
+
+UPDATE shirt_db  SET last_worn =0 where last_worn =15;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SELECT*FROM shirt_db;
++----------+------------+---------+------------+-----------+
+| shirt_id | article    | color   | shirt_size | last_worn |
++----------+------------+---------+------------+-----------+
+|        1 | t-shirt    | white   | S          |        10 |
+|        2 | t-shirt    | green   | S          |       200 |
+|        3 | polo shirt | black   | L          |        10 |
+|        4 | tank top   | blue    | S          |        50 |
+|        5 | t-shirt    | pink    | S          |         0 |
+|        6 | polo shirt | red     | L          |         5 |
+|        7 | tank top   | white   | S          |       200 |
+|        8 | tank top   | blue    | M          |         0 |
+|        9 | polo shirt |  purple | L          |        50 |
++----------+------------+---------+------------+-----------+
+9 rows in set (0.00 sec)
+
+-- updata all the white shirts 
+-- we have to change the size to xs and color to off white
+
+UPDATE shirt_db  SET color="offwhite", shirt_size ="XS" where color="white";
+Query OK, 2 rows affected (0.00 sec)
+Rows matched: 2  Changed: 2  Warnings: 0
+
+mysql> SELECT*FROM shirt_db;
++----------+------------+----------+------------+-----------+
+| shirt_id | article    | color    | shirt_size | last_worn |
++----------+------------+----------+------------+-----------+
+|        1 | t-shirt    | offwhite | XS         |        10 |
+|        2 | t-shirt    | green    | S          |       200 |
+|        3 | polo shirt | black    | L          |        10 |
+|        4 | tank top   | blue     | S          |        50 |
+|        5 | t-shirt    | pink     | S          |         0 |
+|        6 | polo shirt | red      | L          |         5 |
+|        7 | tank top   | offwhite | XS         |       200 |
+|        8 | tank top   | blue     | M          |         0 |
+|        9 | polo shirt |  purple  | L          |        50 |
++----------+------------+----------+------------+-----------+
+9 rows in set (0.00 sec)
+
+-- delete all shirt that have not been worn for 200 hundred days ago
+mysql> DELETE FROM shirt_db where last_worn =200;
+Query OK, 2 rows affected (0.01 sec)
+
+mysql> SELECT*FROM shirt_db;
++----------+------------+----------+------------+-----------+
+| shirt_id | article    | color    | shirt_size | last_worn |
++----------+------------+----------+------------+-----------+
+|        1 | t-shirt    | offwhite | XS         |        10 |
+|        3 | polo shirt | black    | L          |        10 |
+|        4 | tank top   | blue     | S          |        50 |
+|        5 | t-shirt    | pink     | S          |         0 |
+|        6 | polo shirt | red      | L          |         5 |
+|        8 | tank top   | blue     | M          |         0 |
+|        9 | polo shirt |  purple  | L          |        50 |
++----------+------------+----------+------------+-----------+
+7 rows in set (0.00 sec)
+
+-- Delete all tank tops we change test so let delete all of the tank tops that we have in  our data base
+> DELETE FROM shirt_db where article= "tank top";
+Query OK, 2 rows affected (0.03 sec)
+
+mysql> SELECT*FROM shirt_db;
++----------+------------+----------+------------+-----------+
+| shirt_id | article    | color    | shirt_size | last_worn |
++----------+------------+----------+------------+-----------+
+|        1 | t-shirt    | offwhite | XS         |        10 |
+|        3 | polo shirt | black    | L          |        10 |
+|        5 | t-shirt    | pink     | S          |         0 |
+|        6 | polo shirt | red      | L          |         5 |
+|        9 | polo shirt |  purple  | L          |        50 |
++----------+------------+----------+------------+-----------+
+5 rows in set (0.00 sec)
+-- DELETE all the shirt from the table and then drop the whole table
+ DELETE FROM shirt_db;
+Query OK, 5 rows affected (0.05 sec)
+
+mysql> DROP TABLE shirt_db;
+Query OK, 0 rows affected (0.05 sec)
