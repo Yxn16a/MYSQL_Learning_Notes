@@ -1,0 +1,80 @@
+-- if we do not want null in our data we declare earlier that we do not want null passes
+-- by stating NOT NULL after we declare the type 
+
+CREATE TABLE people(first_name VARCHAR(20) NOT NULL,
+SecondName VARCHAR(20) NOT Null, age INT NOT NULL); 
+INSERT INTO  people(first_name, secondName, age) VALUES("Tina ", "Belcher",13);
+INSERT INTO  people(secondName, first_name,age) VALUES("Frond", "Phillip",45);
+INSERT INTO  people(secondName, first_name,age) VALUES("Frond", "Phillip",45),
+("Fischoeder","Calvin",70),("Belcher","Linda",45);
+SELECT* FROM people; 
+
+-- if we want to show wornigs we call show warnings
+-- SHOW WORNINGS; 
+-- Default values 
+-- we can use default when the value is not provided we can also include the NOT NULL to make sure
+-- that someone does not enter null
+-- primary key is the identifier of the of data with the same values and name
+-- we can track the id by auto_ increment
+CREATE TABLE dog1(catId INT NOT NULL auto_increment, name VARCHAR(20) NOT NULL  Default 'no name',
+age INT NOT NULL Default 99,primary key(catId));
+INSERT INTO dog1(name, age) VALUES("cat",15);
+SELECT* From dog1; 
+
+CREATE TABLE employees(ID INT NOT NULL auto_increment, 
+                       last_name VARCHAR(20) NOT NULL, 
+                       first_name VARCHAR(20) NOT NULL,
+                       Middle_name VARCHAR(20), 
+                       age INT NOT NULL, 
+                       current_status VARCHAR(20)NOT NULL Default "employeed",
+                       primary KEY(ID));
+                       
+INSERT INTO employees(first_name,last_name,age) 
+VALUES("Yves","Ngenzi",25),
+      ("Yvon","Manzi",23); 
+      
+SELECT* FROM employees;
+
+
+-- CRUD(create data, read data, update data, Delete data) these are the main operations that we
+-- perform on data
+-- create we use insert into.
+--     Deleting data
+-- Create cats table
+
+CREATE TABLE cats(cat_Id INT  NOT NULL auto_increment, 
+                    name VARCHAR(20) NOT NULL,
+                    breed  VARCHAR(20) NOT NULL,
+                    age INT NOT NULL,
+                    primary key(cat_Id));
+INSERT INTO cats(name, breed, age) VALUES("Ringo","Tabby", 4),
+                                             ("Cindy","Maine Coon", 10),
+                                             ("Dumbledore", 'main Coon', 11),
+                                             ("Egg","persian",4),
+                                             ("misty","Tabby",13),
+                                             ("George Michael", "Ragdoll", 9),
+                                             ("Jackson", "Sphynx",7); 
+-- we can select what we want and we can get the section on data that we want 
+SELECT name,age FROM bigcats;  -- this gives us  the two columns which are name and age
+SELECT age FROM bigcats;         -- this gives the column of the age 
+
+-- Introduction To WHERE
+
+SELECT*FROM bigcats where age = 4; 
+-- it is not case sensitive 
+SELECT*FROM bigcats where name = "egg "; 
+
+-- Challege
+-- Aliases: we can modify where how will the data will appear to us when we request it. 
+SELECT Id AS i From bigcats; -- the title here will come as i not as id. 
+
+-- update or change the data in the bable
+-- this says go to the cat table and updat breed to short hair where breed was Tabby
+UPDATE cats SET breed ="shorthair" WHERE 
+breed = "Tabby"; 
+
+
+                       
+                       
+
+
