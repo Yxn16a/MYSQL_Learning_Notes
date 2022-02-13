@@ -1,0 +1,270 @@
+
+--                          DATA
+-----------------------------------------------------------------------
+CREATE TABLE books 
+	(
+		book_id INT NOT NULL AUTO_INCREMENT,
+		title VARCHAR(100),
+		author_fname VARCHAR(100),
+		author_lname VARCHAR(100),
+		released_year INT,
+		stock_quantity INT,
+		pages INT,
+		PRIMARY KEY(book_id)
+	);
+
+INSERT INTO books (title, author_fname, author_lname, released_year, stock_quantity, pages)
+VALUES
+('The Namesake', 'Jhumpa', 'Lahiri', 2003, 32, 291),
+('Norse Mythology', 'Neil', 'Gaiman',2016, 43, 304),
+('American Gods', 'Neil', 'Gaiman', 2001, 12, 465),
+('Interpreter of Maladies', 'Jhumpa', 'Lahiri', 1996, 97, 198),
+('A Hologram for the King: A Novel', 'Dave', 'Eggers', 2012, 154, 352),
+('The Circle', 'Dave', 'Eggers', 2013, 26, 504),
+('The Amazing Adventures of Kavalier & Clay', 'Michael', 'Chabon', 2000, 68, 634),
+('Just Kids', 'Patti', 'Smith', 2010, 55, 304),
+('A Heartbreaking Work of Staggering Genius', 'Dave', 'Eggers', 2001, 104, 437),
+('Coraline', 'Neil', 'Gaiman', 2003, 100, 208),
+('What We Talk About When We Talk About Love: Stories', 'Raymond', 'Carver', 1981, 23, 176),
+("Where I'm Calling From: Selected Stories", 'Raymond', 'Carver', 1989, 12, 526),
+('White Noise', 'Don', 'DeLillo', 1985, 49, 320),
+('Cannery Row', 'John', 'Steinbeck', 1945, 95, 181),
+('Oblivion: Stories', 'David', 'Foster Wallace', 2004, 172, 329),
+('Consider the Lobster', 'David', 'Foster Wallace', 2005, 92, 343);
+
+
+                         -- STRING FUNCTIONS IN SQL
+
+-- Concat is use to combine data; 
+-- IF we can use Concat such as in this example
+-- CONCAT(first_name," ",LastName) this gives us the two combined names
+
+SELECT CONCAT("hello","World");  -- this put it all together
+SELECT CONCAT(author_fname,'', author_lname ) AS 'fullName' FROM books;
+SELECT author_fname AS  "first" , author_lname AS "last", 
+CONCAT(author_fname,'', author_lname ) AS 'fullName' FROM books;
+
+SELECT author_fname AS  "first" , author_lname AS "last", 
+CONCAT(author_fname,',', author_lname ) AS 'fullName' FROM books;
++---------+----------------+----------------------+
+| first   | last           | fullName             |
++---------+----------------+----------------------+
+| Jhumpa  | Lahiri         | Jhumpa,Lahiri        |
+| Neil    | Gaiman         | Neil,Gaiman          |
+| Neil    | Gaiman         | Neil,Gaiman          |
+| Jhumpa  | Lahiri         | Jhumpa,Lahiri        |
+------------------------------------------------------
+-- CONCAT_WS
+-- this is used when concantinating  multiple  things and we want the symbol to come back over and
+-- over
+-- example
+SELECT CONCAT_WS(' - ', title, author_fname, author_lname) FROM books; 
+
+
+mysql> SELECT CONCAT_WS(' - ', title, author_fname, author_lname) FROM books;
++------------------------------------------------------------------------+
+| CONCAT_WS(' - ', title, author_fname, author_lname)                    |
++------------------------------------------------------------------------+
+| The Namesake - Jhumpa - Lahiri                                         |
+| Norse Mythology - Neil - Gaiman                                        |
+
+-- you see that now we have dashes between the data
+-- SUBSTRING is used select a small chunks of data within given data
+--  mysql counting starts at 1 
+SELECT SUBSTRING("Hello World",1,4); -- this means that we are selecting from character from 1 to 4
+SELECT SUBSTRING("Hello world",-3);  -- this will print from the end to the third character from the
+-- the end of the list. 
+SELECT title From books; 
+-- if you want to print the section  of the tilte 
+
+mysql> SELECT SUBSTRING(title,1,10) AS "small title"  FROM books;
++------------+
+| small title |
++------------+
+| The Namesa |
+| Norse Myth |
+| American G |
+
+SELECT 
+CONCAT(
+SUBSTRING(title,1,10), "...."
+) AS "short title"
+FROM books; 
++----------------+
+| short title    |
++----------------+
+| The Namesa.... |
+| Norse Myth.... |
+| American G.... |
+
+-- REPLACE IS ANOTHER STRING KEYWORD THAT IS USED
+-- REPLACE is case sensitive
+-- REPLACE(where to replace, what you want to replace, what to replace with); 
+-- here all the es in the title will be replaced by 3 as shown by the result bellow 
+mysql> SELECT REPLACE(title,"e", "3")FROM books;
++-----------------------------------------------------+
+| REPLACE(title,"e", "3")                             |
++-----------------------------------------------------+
+| Th3 Nam3sak3                                        |
+| Nors3 Mythology                                     |
+| Am3rican Gods                                       |
+| Int3rpr3t3r of Maladi3s                             |
+| A Hologram for th3 King: A Nov3l
+
+
+mysql> SELECT REPLACE("hello world","hell", "77");
++-------------------------------------+
+| REPLACE("hello world","hell", "77") |
++-------------------------------------+
+| 77o world                           |
++-------------------------------------+
+
+SELECT
+SUBSTRING(REPLACE (
+title, "e","3"),
+1,
+10 
+) FROM books; 
+
+-- Reverse reverses a string
+-- this reverse a string
+SELECT REVERSE("string"); 
+// this returns how many characters are in string
+SELECT CHAR_LENGTH("hello world"); 
+
+SELECT author_lname, CHAR_LENGTH(author_lname) AS "length" FROM books; 
+-- this gives us how characters are in the the string of the author_lname
+mysql> SELECT author_lname, CHAR_LENGTH(author_lname) AS "length" FROM books;
+SELECT
+CONCAT(
+  author_lname, " is " ,CHAR_LENGTH(author_lname), " Characters long "
+  ) AS "chart_count"
+  FROM books; 
+   ->   FROM books;
++---------------------------------------+
+| chart_count                           |
++---------------------------------------+
+| Lahiri is 6 Characters long           |
+| Gaiman is 6 Characters long           |
+| Gaiman is 6 Characters long           |
+| Lahiri is 6 Characters long           |
+| Eggers is 6 Characters long           |
+| Eggers is 6 Characters long           |
+| Chabon is 6 Characters long           |
+
+
+-- UPPER() AND LOWER() helps to change string to lowr or to upper
+-- SELECT UPPER("Hello world"); 
+
+-- CHALLENGES WITH STRING FUNCTIONS
+SELECT 
+REVERSE(
+UPPER("why does my cat look at me with such hatrade")
+) As "challege 1"; 
+
+"challege 1";
++----------------------------------------------+
+| challege 1                                   |
++----------------------------------------------+
+| EDARTAH HCUS HTIW EM TA KOOL TAC YM SEOD YHW |
++----------------------------------------------+
+
+-- challege 2: 
+
+mysql> SELECT REPLACE( title, ' ','->') AS title  FROM books;
++--------------------------------------------------------------+
+| title                                                        |
++--------------------------------------------------------------+
+| The->Namesake                                                |
+| Norse->Mythology                                             |
+| American->Gods                                               |
+| Interpreter->of->Maladies                                    |
+| A->Hologram->for->the->King:->A->Novel                       |
+| The->Circle                                                  |
+
+
+SELECT 
+
+    author_fname AS "foward", REVERSE( author_fname) AS "backward"
+    
+ FROM books; 
+ 
++---------+----------+
+| foward  | backward |
++---------+----------+
+| Jhumpa  | apmuhJ   |
+| Neil    | lieN     |
+| Neil    | lieN     |
+| Jhumpa  | apmuhJ   |
+
+ SELECT 
+   CONCAT(
+   
+    UPPER(author_fname)," ", UPPER( author_lname)
+    
+   ) AS "Full Name in caps" 
+   
+   FROM books; 
+   
+       ->    FROM books;
++----------------------+
+| Full Name in caps    |
++----------------------+
+| JHUMPA LAHIRI        |
+| NEIL GAIMAN          |
+| NEIL GAIMAN          |
+| JHUMPA LAHIRI        |
+| DAVE EGGERS          |
+
+SELECT 
+   CONCAT(
+   title, " was released in ", released_year
+   ) AS "blurb"
+   
+FROM books;    
++--------------------------------------------------------------------------+
+| blurb                                                                    |
++--------------------------------------------------------------------------+
+| The Namesake was released in 2003                                        |
+| Norse Mythology was released in 2016                                     |
+| American Gods was released in 2001                                       |
+| Interpreter of Maladies was released in 1996                             |
+| A Hologram for the King: A Novel was released in 2012                    |
+| The Circle was released in 2013                                          |
+| The Amazing Adventures of Kavalier & Clay was released in 2000           |
+
+-- print the book title and its character length
+
+SELECT 
+title AS " title", CHAR_LENGTH(title) AS "Length"
+FROM books; 
+
++-----------------------------------------------------+--------+
+| title                                               | Length |
++-----------------------------------------------------+--------+
+| The Namesake                                        |     12 |
+| Norse Mythology                                     |     15 |
+| American Gods                                       |     13 |
+| Interpreter of Maladies                             |     23 |
+| A Hologram for the King: A Novel                    |     32 |
+| The Circle                                          |     10 |
+| The Amazing Adventures of Kavalier & Clay           |     41 |
+
+SELECT 
+CONCAT ( SUBSTRING(title,1,10),"..." ) As "short title",
+CONCAT ( author_lname," , ", author_fname ) As "author",
+CONCAT (stock_quantity, " in stock") AS "quantity"
+FROM books; 
+
++---------------+------------------------+--------------+
+| short title   | author                 | quantity     |
++---------------+------------------------+--------------+
+| The Namesa... | Lahiri , Jhumpa        | 32 in stock  |
+| Norse Myth... | Gaiman , Neil          | 43 in stock  |
+| American G... | Gaiman , Neil          | 12 in stock  |
+| Interprete... | Lahiri , Jhumpa        | 97 in stock  |
+| A Hologram... | Eggers , Dave          | 154 in stock |
+| The Circle... | Eggers , Dave          | 26 in stock  |
+| The Amazin... | Chabon , Michael       | 68 in stock  |
+| Just Kids...  | Smith , Patti          | 55 in stock  |
+| A Heartbre... | Eggers , Dave          | 104 in stock |
