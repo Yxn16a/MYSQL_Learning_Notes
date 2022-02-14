@@ -1,0 +1,54 @@
+
+-- Aggregate functions 
+-- grouping data
+-- Average, mean,mode, and 
+-- you can group books
+
+--                         Aggregate function
+
+--                         COUNT how many data we have so we use this to count
+
+SELECT COUNT(*) FROM books; -- this will count all books that we have in the database how manny rows that we have
+SELECT COUNT(author_lname) FROM books; 
+SELECT  COUNT(DISTINCT(author_lname)) FROM books; -- this will give the number of DISTINCT author_lname that we 
+-- in our table
+
+SELECT  COUNT(DISTINCT(author_lname,author_fname)) FROM books;  -- thi will give us which rows that have DISTINCT first
+-- and last name
+
+SELECT  COUNT(title) FROM books Where title LIKE "% "the" %"; -- this will return how many titles with the in them
+
+-- GROUP BY  Aggregate data that are smilar in the single row
+-- it creates mega rows where smilar data are combined in one row and then you can do things like
+-- count how many books each author wrote
+
+SELECT title,author_lname FROM books GROUP BY author_lname; -- this will give you the book of the author and this
+-- does not give us anything useful for the information
+
+SELECT author_fname, author_lname,COUNT(*) From books GROUP BY author_lname, author_fname; -- this will group 
+-- by the books with their first and last name and count them. or it will give us unique books and their counts
+
+
+-- mysql> SELECT author_fname, author_lname,COUNT(*) From books GROUP BY author_lname, author_fname;
+-- +--------------+----------------+----------+
+-- | author_fname | author_lname   | COUNT(*) |
+-- +--------------+----------------+----------+
+-- | Raymond      | Carver         |       14 |
+-- | Michael      | Chabon         |        7 |
+-- | Don          | DeLillo        |        7 |
+-- | Dave         | Eggers         |       21 |
+-- | David        | Foster Wallace |       14 |
+-- | Neil         | Gaiman         |       21 |
+-- | Dan          | Harris         |        7 |
+-- | Freida       | Harris         |        7 |
+-- | Jhumpa       | Lahiri         |       14 |
+
+
+-- this will count how mnay books were released_year in each year by grouping them  and then couting them
+SELECT released_year, COUNT(*) FROM books1 GROUP BY released_year; 
+
+-- MIN and MAX
+SELECT MIN(released_year) from books1; -- gives the lowest number number in data
+SELECT MAX(pages) FROM  books1; 
+-- Find the title of the longest book We will use the nested queries
+SELECT title, pages FROM  books1 WHERE pages = (SELECT MAX(pages) from books1); 
