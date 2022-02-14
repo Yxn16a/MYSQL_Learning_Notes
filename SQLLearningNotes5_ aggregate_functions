@@ -52,3 +52,134 @@ SELECT MIN(released_year) from books1; -- gives the lowest number number in data
 SELECT MAX(pages) FROM  books1; 
 -- Find the title of the longest book We will use the nested queries
 SELECT title, pages FROM  books1 WHERE pages = (SELECT MAX(pages) from books1); 
+-- we are going to make supper rows and in each row we will find the release-year or the books with the
+-- smallest released_year
+-- we can also say that, hey sql go and make a row and in that row give us the  books that has was released 
+-- earlier
+SELECT author_fname,author_lname, MIN(released_year)
+FROM books1 GROUP BY author_fname, author_lname; 
+
+-- lets find a book that has many pages and who wrote that book 
+-- The following code says please sql make a super row of author_lname, first name and their pages 
+-- in that super row please return a book maximum pages among the books that are in the row
+-- please do not forget come between different functions
+SELECT 
+CONCAT (author_lname,",", author_fname) AS "author", 
+MAX(pages) AS " author's longest book"
+FROM  books1 GROUP BY author_lname, author_fname; 
+
+-- Sum is very usefull because it sums the data
+-- sum all the pages in data base
+SELECT SUM(pages) from books1; 
+-- lets find the author who wrote a lof of pages of books
+SELECT author_lname, author_fname, SUM(pages) FROM books1 GROUP BY author_lname, author_fname; 
+
+-- AVG gives you the average price of something  or average of youtube  views or anything that you want the 
+-- average for 
+
+SELECT author_fname,author_lname, AVG(pages) from books1 Group by author_lname, author_fname; 
+-- calculate the average year that books were released 
+SELECT AVG(released_year) FROM  books1; 
+-- What is the average of books  of books released in same year
+-- this will give us how many books that we released each year lets say 
+-- those in 2003, 2004,2005 and more
+SELECT released_year, AVG(stock_quantity) from books1 GROUP BY released_year; 
+-- find the average pages written by each author 
+SELECT author_fname,author_lname, AVG(pages) from books1 Group by author_lname, author_fname; 
+
+--       Challeges with Aggregate 
+-- 1     Print the number of books in the data base
+SELECT COUNT(title) As "total books" FROM books1; 
+-- +-------------+
+-- | total books |
+-- +-------------+
+-- |          96 |
+-- +-------------+
+
+-- Print out how mant boosk are released each year 
+
+SELECT 
+released_year, COUNT(released_year) AS "Number of books released that year"
+FROM books1
+GROUP BY released_year; 
+   -> GROUP BY released_year;
+-- +---------------+------------------------------------+
+-- | released_year | Number of books released that year |
+-- +---------------+------------------------------------+
+-- |          1945 |                                  6 |
+-- |          1981 |                                  6 |
+-- |          1985 |                                  6 |
+-- |          1989 |                                  6 |
+-- |          1996 |                                  6 |
+-- |          2000 |                                  6 |
+-- |          2001 |                                 12 |
+-- |          2003 |                                 12 |
+
+-- print out the total book in the stock 
+SELECT SUM(stock_quantity) FROM books1; 
+-- +---------------------+
+-- | SUM(stock_quantity) |
+-- +---------------------+
+-- |                6804 |
+-- +---------------------+
+
+-- find the average released_year for each author
+SELECT author_fname, author_lname, AVG(released_year) FROM books1 GROUP BY author_fname, author_lname; 
+
+-- +--------------+----------------+--------------------+
+-- | author_fname | author_lname   | AVG(released_year) |
+-- +--------------+----------------+--------------------+
+-- | Dave         | Eggers         |          2008.6667 |
+-- | David        | Foster Wallace |          2004.5000 |
+-- | Don          | DeLillo        |          1985.0000 |
+-- | Jhumpa       | Lahiri         |          1999.5000 |
+-- | John         | Steinbeck      |          1945.0000 |
+-- | Michael      | Chabon         |          2000.0000 |
+-- | Neil         | Gaiman         |          2006.6667 |
+-- | Patti        | Smith          |          2010.0000 |
+-- | Raymond      | Carver         |          1985.0000 |
+-- +--------------+----------------+--------------------+
+
+-- Find the full name of the author who wrote the longest book
+SELECT 
+CONCAT(author_fname, author_lname), pages
+From books1 ORDER BY pages DESC LIMIT 1;
+
+-- or we can do something like
+SELECT 
+CONCAT(author_fname, author_lname) from books where pages =(SELECT max(pages) from books1); 
+-- +------------------------------------+-------+
+-- | CONCAT(author_fname, author_lname) | pages |
+-- +------------------------------------+-------+
+-- | MichaelChabon                      |   634 |
+-- +------------------------------------+-------+
+
+-- create a table that shows the year the books are released then how many books are released that year
+-- then the average pages of books that are released that year
+
+SELECT 
+DISTINCT
+released_year AS "year",
+COUNT(*) as "books", 
+AVG(pages) as "avg pages"
+from books1 GROUP BY released_year; 
+
+-- +------+-------+-----------+
+-- | year | books | avg pages |
+-- +------+-------+-----------+
+-- | 1945 |     7 |  181.0000 |
+-- | 1981 |     7 |  176.0000 |
+-- | 1985 |     7 |  320.0000 |
+-- | 1989 |     7 |  526.0000 |
+-- | 1996 |     7 |  198.0000 |
+-- | 2000 |     7 |  634.0000 |
+-- | 2001 |    14 |  451.0000 |
+-- | 2003 |    14 |  249.5000 |
+-- | 2004 |     7 |  329.0000 |
+-- | 2005 |     7 |  343.0000 |
+-- | 2010 |     7 |  304.0000 |
+-- | 2012 |     7 |  352.0000 |
+-- | 2013 |     7 |  504.0000 |
+-- | 2016 |     7 |  304.0000 |
+
+
