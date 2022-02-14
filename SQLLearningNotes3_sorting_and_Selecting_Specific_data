@@ -1,0 +1,231 @@
+   Data
+ -----------------------------  
+   
+        CREATE TABLE books 
+	(
+		book_id INT NOT NULL AUTO_INCREMENT,
+		title VARCHAR(100),
+		author_fname VARCHAR(100),
+		author_lname VARCHAR(100),
+		released_year INT,
+		stock_quantity INT,
+		pages INT,
+		PRIMARY KEY(book_id)
+	);
+
+INSERT INTO books (title, author_fname, author_lname, released_year, stock_quantity, pages)
+VALUES
+('The Namesake', 'Jhumpa', 'Lahiri', 2003, 32, 291),
+('Norse Mythology', 'Neil', 'Gaiman',2016, 43, 304),
+('American Gods', 'Neil', 'Gaiman', 2001, 12, 465),
+('Interpreter of Maladies', 'Jhumpa', 'Lahiri', 1996, 97, 198),
+('A Hologram for the King: A Novel', 'Dave', 'Eggers', 2012, 154, 352),
+('The Circle', 'Dave', 'Eggers', 2013, 26, 504),
+('The Amazing Adventures of Kavalier & Clay', 'Michael', 'Chabon', 2000, 68, 634),
+('Just Kids', 'Patti', 'Smith', 2010, 55, 304),
+('A Heartbreaking Work of Staggering Genius', 'Dave', 'Eggers', 2001, 104, 437),
+('Coraline', 'Neil', 'Gaiman', 2003, 100, 208),
+('What We Talk About When We Talk About Love: Stories', 'Raymond', 'Carver', 1981, 23, 176),
+("Where I'm Calling From: Selected Stories", 'Raymond', 'Carver', 1989, 12, 526),
+('White Noise', 'Don', 'DeLillo', 1985, 49, 320),
+('Cannery Row', 'John', 'Steinbeck', 1945, 95, 181),
+('Oblivion: Stories', 'David', 'Foster Wallace', 2004, 172, 329),
+('Consider the Lobster', 'David', 'Foster Wallace', 2005, 92, 343);
+
+INSERT INTO books
+    (title, author_fname, author_lname, released_year, stock_quantity, pages)
+    VALUES ('10% Happier', 'Dan', 'Harris', 2014, 29, 256), 
+           ('fake_book', 'Freida', 'Harris', 2001, 287, 428),
+           ('Lincoln In The Bardo', 'George', 'Saunders', 2017, 1000, 367);
+           
+           
+   
+ 
+   
+   -- Sorting data
+------------------------------------  
+  
+-- Selecting distinctive data
+-- 1 selecting distinctivedata
+--             Distinct (Does not return duplicates)
+SELECT Distinct author_lname FROM books;
+
+-- Distinct can be used to combine objects 
+SELECT Distinct(CONCAT(author_lname, author_fname)) -- this gives us the row that are Distinct 
+-- on their first and last name however we can do this
+SELECT Distinct author_fname, author_lname FROM books;  -- this is applied to the whole rows like
+-- the following
+author_fname     author_lname
+| John         | Steinbeck      |
+| David        | Foster Wallace |
+| Dan          | Harris         |
+| Freida       | Harris         |
+| George       | Saunders       |
++--------------+----------------+
+-- you can see that we have two Distinct Harris in our tables
+
+-- Sorting data by ORDER BY
+-- this will sort last names alphabetically
+SELECT author_lname FROM books ORDER BY author_lname; 
+-- WE can also order the books by title but in ascending order like the following
+ysql> SELECT title from books ORDER BY title DESC;
++-----------------------------------------------------+
+| title                                               |
++-----------------------------------------------------+
+| White Noise                                         |
+| White Noise                                         |
+| Where I'm Calling From: Selected Stories            |
+| Where I'm Calling From: Selected Stories            |
+| What We Talk About When We Talk About Love: Stories |
+| What We Talk About When We Talk About Love: Stories |
+| The Namesake
+
+-- you can see we start from W  and move down to T in descending order
+-- you can also order numbers like released_year of the book
+mysql> SELECT released_year  from books ORDER BY released_year DESC
+
++---------------+
+| released_year |
++---------------+
+|          2017 |
+|          2016 |
+|          2016 |
+|          2014 |
+
+-- you can also have a shortcut for order by such as
+SELECT title, author_lname, author_fname, released_year FROM books ORDER BY 2; -- This means that we will order
+-- by author_lname.
+-- you can also order by two colomns too 
+-- this order by lastname, firsname means that first order by last name then order by firstName
+SELECT author_lname, author_fname, released_year FROM books ORDER BY author_lname,author_fname;
+-- Limit is used to show a small list
+-- select the released_year in the descending by released year but I only need 5 first books
+-- that are lately released
+
+SELECT released_year from books ORDER BY released_year DESC Limit 5; -- this will give the books
+-- with the released_year but only first five 
+-- one means that we start from low 2 and go five row
+SELECT released_year from books ORDER BY released_year DESC Limit 1, 5;
+SELECT released_year from books ORDER BY released_year DESC Limit 10, 1; -- this retrives one row
+-- you can use a like methode to search something that 
+-- for example we can a book where the author first name has da in in as and example
+-- WHERE author_lname LIKE '%da%'; -- this will search a first name that has"da" in it
+SELECT author_fname FROM books WHERE author_fname LIKE "% da% "; -- this state that anything that
+-- has da in itself will show up
+SELECT author_fname FROM books WHERE author_fname LIKE "da%" -- this says that we select anything
+-- that start with da
+SELECT author_fname FROM books WHERE author_fname LIKE "%da "  -- gives us the world ended by da
+
+-- Another tool for searching is underscores
+-- where stock_quantity LIKE "_"; -- this gives the quantity that has two digits 
+SELECT title, stock_quantity FROM books Where stock_quantity LIKE "____"; 
+-- to find the one with percent signal
+SELECT title FROM books Where title LIKE "%\%%"; -- find a book title that has a % in it
+
+                        -- Challenges
+                        
+-- select all story collections or all titles with word stories in them
+
+SELECT title From books where title LIKE "%stories%"; 
+
+-- | title                                               |
+-- +-----------------------------------------------------+
+-- | What We Talk About When We Talk About Love: Stories |
+-- | Where I'm Calling From: Selected Stories            |
+-- | Oblivion: Stories                                   |
+-- | What We Talk About When We Talk About Love: Stories |
+-- | Where I'm Calling From: Selected Stories            |
+-- | Oblivion: Stories                                   |
+-- | What We Talk About When We Talk About Love: Stories |
+-- | Where I'm Calling From: Selected Stories            |
+-- | Oblivion: Stories                                   |
+
+
+-- the longest book in the collections of  books
+
+SELECT title, pages FROM books ORDER BY pages DESC Limit 0,1;
+SELECT title, pages FROM books ORDER BY pages DESC Limit 0,1;
++-------------------------------------------+-------+
+| title                                     | pages |
++-------------------------------------------+-------+
+| The Amazing Adventures of Kavalier & Clay |   634 |
++-------------------------------------------+-------+
+
+-- Print the most recent books
+
+SELECT Distinct title, released_year FROM books ORDER BY released_year DESC Limit 3; 
+
++----------------------+---------------+
+| title                | released_year |
++----------------------+---------------+
+| Lincoln In The Bardo |          2017 |
+| Norse Mythology      |          2016 |
+| 10% Happier          |          2014 |
++----------------------+---------------+
+
+-- find all books with an author_lname CONTATING character
+
+SELECT Distinct title,author_lname From books where author_lname LIKE "% %";
+
+mysql> SELECT Distinct title,author_lname From books where author_lname LIKE "% %";
++----------------------+----------------+
+| title                | author_lname   |
++----------------------+----------------+
+| Oblivion: Stories    | Foster Wallace |
+| Consider the Lobster | Foster Wallace |
++----------------------+----------------+
+
+
+-- find the three books with the lowest number in stock
+
+SELECT Distinct title, released_year, stock_quantity from books ORDER BY stock_quantity LIMIT 3; 
+
+-- +-----------------------------------------------------+---------------+----------------+
+-- | title                                               | released_year | stock_quantity |
+-- +-----------------------------------------------------+---------------+----------------+
+-- | American Gods                                       |          2001 |             12 |
+-- | Where I'm Calling From: Selected Stories            |          1989 |             12 |
+-- | What We Talk About When We Talk About Love: Stories |          1981 |             23 |
+-- +-----------------------------------------------------+---------------+----------------+
+
+-- print title and author_lname, sorted first by author_lname and then by title
+
+SELECT title, author_lname FROM books ORDER BY author_lname, title; 
+
+-- mysql>
+-- mysql> SELECT title, author_lname FROM books ORDER BY author_lname, title;
+-- +-----------------------------------------------------+----------------+
+-- | title                                               | author_lname   |
+-- +-----------------------------------------------------+----------------+
+-- | What We Talk About When We Talk About Love: Stories | Carver         |
+-- | What We Talk About When We Talk About Love: Stories | Carver         |
+-- | What We Talk About When We Talk About Love: Stories | Carver         |
+-- | What We Talk About When We Talk About Love: Stories | Carver         |
+-- | What We Talk About When We Talk About Love: Stories | Carver         |
+-- | Where I'm Calling From: Selected Stories            | Carver         |
+-- | Where I'm Calling From: Selected Stories            | Carver         |
+-- | Where I'm Calling From: Selected Stories            | Carver         |
+-- | Where I'm Calling From: Selected Stories            | Carver         |
+-- | Where I'm Calling From: Selected Stories            | Carver         |
+
+ SELECT 
+ UPPER(
+  CONCAT(
+  "my fevorite athor is ", author_fname, " ",  author_lname, "!"
+ ) 
+ ) As "Yell" FROM books  ORDER BY author_lname; 
+
+   ->  ) As "Yell" FROM books  ORDER BY author_lname;
++--------------------------------------------+
+| Yell                                       |
++--------------------------------------------+
+| MY FEVORITE ATHOR IS RAYMOND CARVER!       |
+| MY FEVORITE ATHOR IS RAYMOND CARVER!       |
+| MY FEVORITE ATHOR IS RAYMOND CARVER!       |
+| MY FEVORITE ATHOR IS RAYMOND CARVER!       |
+| MY FEVORITE ATHOR IS RAYMOND CARVER!       |
+| MY FEVORITE ATHOR IS RAYMOND CARVER!       |
+| MY FEVORITE ATHOR IS RAYMOND CARVER!       |
+| MY FEVORITE ATHOR IS RAYMOND CARVER!       |
+| MY FEVORITE ATHOR IS RAYMOND CARVER!       |
+ 
