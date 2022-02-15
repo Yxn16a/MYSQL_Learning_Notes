@@ -1,0 +1,163 @@
+
+---               Dates and TIMES
+
+-- Dates which stores year-month-day without time 
+-- for example, you can use a birthday
+-- Time stores time with no dates
+-- hour:minutes:seconds
+-- DATETIME
+-- save date and time
+-- and it is used most of the times
+-- this is useful to store dta
+-- yy-mm-dd hh:mm:ss is the format of datatime
+-- EXAMPLES
+
+CREATE TABLE people1(
+name VARCHAR(10),
+birthday DATE, 
+birthtime TIME, 
+birthdateandtime DATETIME
+);
+INSERT INTO people1(name,birthday,birthtime,birthdateandtime)
+Values("padma", "1983-11-11","10:07:35","1983-11-11 10:07:35");
+INSERT INTO people1(name,birthday,birthtime,birthdateandtime)
+Values("Larry", "1943-12-25","04:10:42","1943-12-25 04:10:42");
+
+INSERT INTO people1(name,birthday,birthtime,birthdateandtime)
+Values("Toster", current_date,current_time, now());
+-- current_date GIVES CURRENT DATE
+-- current_time GIVES CURRENT TIME
+-- now gives current datetime
+-- +--------+------------+-----------+---------------------+
+-- | name   | birthday   | birthtime | birthdateandtime    |
+-- +--------+------------+-----------+---------------------+
+-- | padma  | 1983-11-11 | 10:07:35  | 1983-11-11 10:07:35 |
+-- | Larry  | 1943-12-25 | 04:10:42  | 1943-12-25 04:10:42 |
+-- | Toster | 2022-02-15 | 00:55:04  | 2022-02-15 00:55:04 |
+-- +--------+------------+-----------+---------------------+
+
+
+-- FORMATTING DATES
+
+SELECT name,  DAY(birthday) from people;
+mysql> SELECT name,  DAY(birthday) from people;
+-- the function day will extract all day from date 
+-- +--------+---------------+
+-- | name   | DAY(birthday) |
+-- +--------+---------------+
+-- | padma  |            11 |
+-- | Larry  |            25 |
+-- | Toster |            15 |
+-- +--------+---------------+
+
+-- we can actually also use dayName
+SELECT name,  DAYNAME(birthday) from people;
+SELECT name,  DAYOFYEAR(birthday) from people; -- which day of the year was this
+SELECT name,  DAYOFWEEK(birthday) from people; -- WHich day of the week
+SELECT name Monthofyear(birthday) from poeple; 
+SELECT name, 
+CONCAT(name," ", MONTHNAME(birthday)," ", DAY(birthday)," ",  YEAR(birthday)) as "birthday"
+from people; 
+-- +--------+-------------------------+
+-- | name   | birthday                |
+-- +--------+-------------------------+
+-- | padma  | padma November 11 1983  |
+-- | Larry  | Larry December 25 1943  |
+-- | Toster | Toster February 15 2022 |
+-- +--------+-------------------------+
+
+-- We can use format key word to formate date and time like in the following example
+-- this means go the birthday in the table and pick a day of the week and print that
+
+ Select DATE_FORMAT(birthday,"%W") from people; 
+--  ----------------------------+
+-- | DATE_FORMAT(birthday,"%W") |
+-- +----------------------------+
+-- | Friday                     |
+-- | Saturday                   |
+-- | Tuesday                    |
+-- +----------------------------+
+ -- capital letters ar esed then the worlds are printed but when small letters are used then 
+ -- numbers are printed
+
+ Select DATE_FORMAT(birthday,"%w %y %m") from people; 
+-- +----------------------------------+
+-- | DATE_FORMAT(birthday,"%w %y %m") |
+-- +----------------------------------+
+-- | 5 83 11                          |
+-- | 6 43 12                          |
+-- | 2 22 02                          |
+-- +----------------------------------+
+
+ Select DATE_FORMAT(birthday,"%D/%M/ %Y at %h:%m") from people; 
+--  +--------------------------------------------+
+-- | DATE_FORMAT(birthday,"%D/%M/ %Y at %h:%m") |
+-- +--------------------------------------------+
+-- | 11th/November/ 1983 at 12:11               |
+-- | 25th/December/ 1943 at 12:12               |
+-- | 15th/February/ 2022 at 12:02               |
+-- +--------------------------------------------+
+
+                      -- Data math
+                      -- DATEDIFF(CURRENT, PAST) this takes current date minus past date
+SELECT name, birthday, DATEDIFF(NOW(), birthday) from people;                    
+-- +--------+------------+---------------------------+
+-- | name   | birthday   | DATEDIFF(NOW(), birthday) |
+-- +--------+------------+---------------------------+
+-- | padma  | 1983-11-11 |                     13976 |
+-- | Larry  | 1943-12-25 |                     28542 |
+-- | Toster | 2022-02-15 |                         0 |
+
+-- this also represent how many days passed since this date of 13976 
+                   
+                   -- DATE ADD this allows to give interval of months and days
+
+SELECT birthday, DATE_ADD(birthday, interval 1 month) from people; 
+    -- you see this table that we moved from november to December on the first row                
+--     +------------+--------------------------------------+
+-- | birthday   | DATE_ADD(birthday, interval 1 month) |
+-- +------------+--------------------------------------+
+-- | 1983-11-11 | 1983-12-11                           |
+-- | 1943-12-25 | 1944-01-25                           |
+-- | 2022-02-15 | 2022-03-15                           |
+-- +------------+--------------------------------------+    
+
+-- you can also do something like the following
+ SELECT birthday,birthday + interval 1 month from people; 
+ -- this also gives us as the table we have above
+-- +------------+-----------------------------+
+-- | birthday   | birthday + interval 1 month |
+-- +------------+-----------------------------+
+-- | 1983-11-11 | 1983-12-11                  |
+-- | 1943-12-25 | 1944-01-25                  |
+-- | 2022-02-15 | 2022-03-15                  |
+-- +------------+-----------------------------+
+--
+SELECT birthday,birthday + interval 15 month +interval 10 HOUR  from people; 
+-- WE CAN ALSO chain these function together as the shown above 
+-- +------------+------------------------------------------------+
+-- | birthday   | birthday + interval 15 month +interval 10 HOUR |
+-- +------------+------------------------------------------------+
+-- | 1983-11-11 | 1985-02-11 10:00:00                            |
+-- | 1943-12-25 | 1945-03-25 10:00:00                            |
+-- | 2022-02-15 | 2023-05-15 10:00:00                            |
+
+
+  -- TIME STAMPS
+  
+--  it is a data type are used when time stamp only works 1970 to 2038
+--  time stamp occupies small space
+-- example 
+CREATE TABLE comments(
+content VARCHAR(100), 
+-- the second now is crucial becuase when we update the comment then the time stamp update too
+-- we can use now or current_timestamp
+created_at timestamp default NOW() on update now()
+);
+
+INSERT INTO comments(content)
+values ("I found that article fun"),("That is offensive");
+
+INSERT INTO comments(content)
+values ("lol");
+
