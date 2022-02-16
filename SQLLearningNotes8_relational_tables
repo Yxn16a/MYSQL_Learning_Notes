@@ -1,0 +1,113 @@
+
+        Relationships and Joints
+----------------------------------  
+-- this is import to create related table
+-- different type of relationships
+-- one to one relationship 
+-- one to many
+-- many to many relationship
+-- one to many is common relationship 
+-- many to many relationships 
+ 
+ one to many relationships
+-------------------------------------- 
+ 
+-- example is customers and orders
+-- one customer have many orders
+-- keep your data separate
+-- primaryKey custormers has to be unique
+-- foreign keys are reference to other tables by other tables
+-- implementation of relational data
+
+              DATA
+ ------------------------------
+ 
+CREATE TABLE customers(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    email VARCHAR(100)
+);
+
+CREATE TABLE orders(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_date DATE,
+    amount DECIMAL(8,2),
+    customer_id INT,
+    -- this is important for reference
+    FOREIGN KEY(customer_id) REFERENCES customers(id)
+);
+
+
+INSERT INTO customers (first_name, last_name, email) 
+VALUES ('Boy', 'George', 'george@gmail.com'),
+       ('George', 'Michael', 'gm@gmail.com'),
+       ('David', 'Bowie', 'david@gmail.com'),
+       ('Blue', 'Steele', 'blue@gmail.com'),
+       ('Bette', 'Davis', 'bette@aol.com');
+       
+INSERT INTO orders (order_date, amount, customer_id)
+VALUES ('2016/02/10', 99.99, 1),
+       ('2017/11/11', 35.50, 1),
+       ('2014/12/12', 800.67, 2),
+       ('2015/01/03', 12.50, 2),
+       ('1999/04/11', 450.25, 5);
+
+
+-- orders search lets say lets search George orders,
+SELECT *from orders where customer_id = (
+SELECT id from customers where first_name = "George"
+);
+
+-- +----+------------+--------+-------------+
+-- | id | order_date | amount | customer_id |
+-- +----+------------+--------+-------------+
+-- |  3 | 2014-12-12 | 800.67 |           2 |
+-- |  4 | 2015-01-03 |  12.50 |           2 |
+-- +----+------------+--------+-------------+
+
+-- joints is used to conjoin tables 
+-- cross joints is not a good one 
+                                              -- IMPLICITY INNER JOIN
+SELECT * FROM customers, orders where customers.id = orders.customers_id;
+-- this gives out orders and customers in the same table and shows all the orders each person did
+
++----+------------+-----------+------------------+----+------------+--------+-------------+
+| id | first_name | last_name | email            | id | order_date | amount | customer_id |
++----+------------+-----------+------------------+----+------------+--------+-------------+
+|  1 | Boy        | George    | george@gmail.com |  1 | 2016-02-10 |  99.99 |           1 |
+|  1 | Boy        | George    | george@gmail.com |  2 | 2017-11-11 |  35.50 |           1 |
+|  2 | George     | Michael   | gm@gmail.com     |  3 | 2014-12-12 | 800.67 |           2 |
+|  2 | George     | Michael   | gm@gmail.com     |  4 | 2015-01-03 |  12.50 |           2 |
+|  5 | Bette      | Davis     | bette@aol.com    |  5 | 1999-04-11 | 450.25 |           5 |
++----+------------+-----------+------------------+----+------------+--------+-------------+
+
+SELECT first_name, last_name,order_date, amount FROM customers, orders where customers.id = orders.customer_id;
+SELECT first_name, last_name,order_date, amount FROM customers, orders where customers.id = orders.customer_id;
++------------+-----------+------------+--------+
+| first_name | last_name | order_date | amount |
++------------+-----------+------------+--------+
+| Boy        | George    | 2016-02-10 |  99.99 |
+| Boy        | George    | 2017-11-11 |  35.50 |
+| George     | Michael   | 2014-12-12 | 800.67 |
+| George     | Michael   | 2015-01-03 |  12.50 |
+| Bette      | Davis     | 1999-04-11 | 450.25 |
++------------+-----------+------------+--------+
+
+-- EXPLICITY INNER JOIN OF TABLES BECAUSE WE ARE WRITTING USING JOIN. 
+-- this will produce the same results as that we saw above 
+SELECT *FROM customers
+JOIN orders
+     ON customers.id = orders.customer_id; -- We are joing these table using a condition 
+     -- the order does matter only for printing but the data stays the same
+     -- it better to do EXPLICITY join
+
++----+------------+-----------+------------------+----+------------+--------+-------------+
+| id | first_name | last_name | email            | id | order_date | amount | customer_id |
++----+------------+-----------+------------------+----+------------+--------+-------------+
+|  1 | Boy        | George    | george@gmail.com |  1 | 2016-02-10 |  99.99 |           1 |
+|  1 | Boy        | George    | george@gmail.com |  2 | 2017-11-11 |  35.50 |           1 |
+|  2 | George     | Michael   | gm@gmail.com     |  3 | 2014-12-12 | 800.67 |           2 |
+|  2 | George     | Michael   | gm@gmail.com     |  4 | 2015-01-03 |  12.50 |           2 |
+|  5 | Bette      | Davis     | bette@aol.com    |  5 | 1999-04-11 | 450.25 |           5 |
++----+------------+-----------+------------------+----+------------+--------+-------------+
