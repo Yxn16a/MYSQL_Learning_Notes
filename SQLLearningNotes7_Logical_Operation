@@ -1,0 +1,530 @@
+DATA 
+
+     CREATE TABLE books1
+	(
+		book_id INT NOT NULL AUTO_INCREMENT,
+		title VARCHAR(100),
+		author_fname VARCHAR(100),
+		author_lname VARCHAR(100),
+		released_year INT,
+		stock_quantity INT,
+		pages INT,
+		PRIMARY KEY(book_id)
+	);
+
+INSERT INTO books1 (title, author_fname, author_lname, released_year, stock_quantity, pages)
+VALUES
+('The Namesake', 'Jhumpa', 'Lahiri', 2003, 32, 291),
+('Norse Mythology', 'Neil', 'Gaiman',2016, 43, 304),
+('American Gods', 'Neil', 'Gaiman', 2001, 12, 465),
+('Interpreter of Maladies', 'Jhumpa', 'Lahiri', 1996, 97, 198),
+('A Hologram for the King: A Novel', 'Dave', 'Eggers', 2012, 154, 352),
+('The Circle', 'Dave', 'Eggers', 2013, 26, 504),
+('The Amazing Adventures of Kavalier & Clay', 'Michael', 'Chabon', 2000, 68, 634),
+('Just Kids', 'Patti', 'Smith', 2010, 55, 304),
+('A Heartbreaking Work of Staggering Genius', 'Dave', 'Eggers', 2001, 104, 437),
+('Coraline', 'Neil', 'Gaiman', 2003, 100, 208),
+('What We Talk About When We Talk About Love: Stories', 'Raymond', 'Carver', 1981, 23, 176),
+("Where I'm Calling From: Selected Stories", 'Raymond', 'Carver', 1989, 12, 526),
+('White Noise', 'Don', 'DeLillo', 1985, 49, 320),
+('Cannery Row', 'John', 'Steinbeck', 1945, 95, 181),
+('Oblivion: Stories', 'David', 'Foster Wallace', 2004, 172, 329),
+('Consider the Lobster', 'David', 'Foster Wallace', 2005, 92, 343);
+
+INSERT INTO books1
+    (title, author_fname, author_lname, released_year, stock_quantity, pages)
+    VALUES ('10% Happier', 'Dan', 'Harris', 2014, 29, 256), 
+           ('fake_book', 'Freida', 'Harris', 2001, 287, 428),
+           ('Lincoln In The Bardo', 'George', 'Saunders', 2017, 1000, 367);
+           
+           
+
+                     logical operators in my sql
+                 -----------------------------------
+
+--                NOT EQUAL(!=)  
+-- SELECT ALL BIRTHDAYS  between 1990 AND 1992
+-- SELECT BIRTHDAYS that are between  two dates
+-- SELECT books that were not released in 2017
+
+SELECT title, released_year from books1 WHERE released_year != 2017; 
+
+--                 NOT Like
+SELECT title FROM books1 where title  NOT Like " W %"; 
+
+
+SELECT title FROM books1 where title  NOT Like "% W %"; -- this will give us all the titles that do not
+-- have W
+-- +-----------------------------------------------------+
+-- | title                                               |
+-- +-----------------------------------------------------+
+-- | The Namesake                                        |
+-- | Norse Mythology                                     |
+-- | American Gods                                       |
+-- | Interpreter of Maladies                             |
+-- | A Hologram for the King: A Novel                    |
+-- | The Circle                                          |
+-- | The Amazing Adventures of Kavalier & Clay           |
+-- | Just Kids                                           |
+-- | A Heartbreaking Work of Staggering Genius           |
+-- | Coraline                                            |
+
+                            -- greater than 
+SELECT title, released_year FROM books1 where released_year > 2000; 
+
+mysql> SELECT title, released_year FROM books1  where released_year >= 2000 order by released_year;
+
+-- +-------------------------------------------+---------------+
+-- | title                                     | released_year |
+-- +-------------------------------------------+---------------+
+-- | Norse Mythology                           |          2016 |
+-- | Norse Mythology                           |          2016 |
+-- | The Circle                                |          2013 |
+-- | The Circle                                |          2013 |
+-- | A Hologram for the King: A Novel          |          2012 |
+-- | A Hologram for the King: A Novel          |          2012 |
+-- | Just Kids                                 |          2010 |
+-- | Just Kids                                 |          2010 |
+-- | Consider the Lobster                      |          2005 |
+-- | Consider the Lobster                      |          2005 |
+-- | Oblivion: Stories                         |          2004 |
+-- | Oblivion: Stories                         |          2004 |
+-- | The Namesake                              |          2003 |
+-- | Coraline                                  |          2003 |
+-- | Coraline                                  |          2003 |
+
+SELECT 5>7; -- this gives us zero
+SELECT 'A'>= "a" -- this says that the A and a are the same because case does not matter in my sql
+
+                                 -- greater than 
+  
+SELECT distinct title, released_year FROM books1 where released_year < 2000 order by released_year; 
+-- this will give us all the books that were released before 2000 
+
+-- +-----------------------------------------------------+---------------+
+-- | title                                               | released_year |
+-- +-----------------------------------------------------+---------------+
+-- | Cannery Row                                         |          1945 |
+-- | What We Talk About When We Talk About Love: Stories |          1981 |
+-- | White Noise                                         |          1985 |
+-- | Where I'm Calling From: Selected Stories            |          1989 |
+-- | Interpreter of Maladies                             |          1996 |
+-- +-----------------------------------------------------+---------------+
+                                 
+                                 -- and && 
+SELECT distinct title, released_year FROM books1 where released_year > 2000
+  && released_year < 2003 order by released_year; 
+
+-- +-------------------------------------------+---------------+
+-- | title                                     | released_year |
+-- +-------------------------------------------+---------------+
+-- | A Heartbreaking Work of Staggering Genius |          2001 |
+-- | American Gods                             |          2001 |
+-- +-------------------------------------------+---------------+
+
+SELECT distinct title, released_year FROM books1 where released_year >= 2000
+  || released_year <= 2003 order by released_year; 
+  
+-- select books written by dave eggers, published after the year 2010
+SELECT distinct author_lname, title, released_year from books1 
+where author_lname ="eggers" && released_year >= 2010;
+-- +--------------+----------------------------------+---------------+
+-- | author_lname | title                            | released_year |
+-- +--------------+----------------------------------+---------------+
+-- | Eggers       | A Hologram for the King: A Novel |          2012 |
+-- | Eggers       | The Circle                       |          2013 |
+-- +--------------+----------------------------------+---------------+
+
+SELECT distinct author_lname, author_fname, title, released_year from books1 
+where author_lname ="eggers"&& author_fname ="Dave" && released_year >= 2010;
+
+-- +--------------+--------------+----------------------------------+---------------+
+-- | author_lname | author_fname | title                            | released_year |
+-- +--------------+--------------+----------------------------------+---------------+
+-- | Eggers       | Dave         | A Hologram for the King: A Novel |          2012 |
+-- | Eggers       | Dave         | The Circle                       |          2013 |
+-- +--------------+--------------+----------------------------------+---------------+
+
+SELECT distinct author_lname, author_fname, title, released_year from books1 
+where author_lname ="eggers"&& author_fname ="Dave" && released_year >= 2010 && title LIKE "%novel%"; 
+
+-- +--------------+--------------+----------------------------------+---------------+
+-- | author_lname | author_fname | title                            | released_year |
+-- +--------------+--------------+----------------------------------+---------------+
+-- | Eggers       | Dave         | A Hologram for the King: A Novel |          2012 |
+-- +--------------+--------------+----------------------------------+---------------+
+
+                  -- or= || one side can be true to make the stament to be true; 
+
+SELECT distinct author_lname, author_fname, title, released_year from books1 
+where author_lname ="eggers" || released_year >= 2010;
+
+-- +--------------+--------------+-------------------------------------------+---------------+
+-- | author_lname | author_fname | title                                     | released_year |
+-- +--------------+--------------+-------------------------------------------+---------------+
+-- | Gaiman       | Neil         | Norse Mythology                           |          2016 |
+-- | Eggers       | Dave         | A Hologram for the King: A Novel          |          2012 |
+-- | Eggers       | Dave         | The Circle                                |          2013 |
+-- | Smith        | Patti        | Just Kids                                 |          2010 |
+-- | Eggers       | Dave         | A Heartbreaking Work of Staggering Genius |          2001 |
+-- +--------------+--------------+-------------------------------------------+---------------+
+
+                                        -- between x and y 
+-- this returns the data between certain limits
+
+SELECT title, released_year FROM books1 WHERE released_year BETWEEN 2001 AND 2003; 
+-- this gives the books that were released between 2001 and 2003 inclusive
+SELECT title, released_year FROM books1 WHERE released_year BETWEEN 2001 AND 2003;
++-------------------------------------------+---------------+
+| title                                     | released_year |
++-------------------------------------------+---------------+
+| The Namesake                              |          2003 |
+| American Gods                             |          2001 |
+| A Heartbreaking Work of Staggering Genius |          2001 |
+| Coraline                                  |          2003 |
+| The Namesake                              |          2003 |
+| American Gods                             |          2001 |
+| A Heartbreaking Work of Staggering Genius |          2001 |
+| Coraline                                  |          2003 |
+| The Namesake                              |          2003 |
+| American Gods                             |          2001 |
+| A Heartbreaking Work of Staggering Genius |          2001 |
+| Coraline                                  |          2003 |
+
+                       -- NOT BETWEEN X AND Y
+-- this return something ousited the the range specified
+SELECT title, released_year FROM books1 WHERE released_year NOT BETWEEN 2001 AND 2003;
+
+mysql> SELECT title, released_year FROM books1 WHERE released_year NOT BETWEEN 2001 AND 2003;
+-- +-----------------------------------------------------+---------------+
+-- | title                                               | released_year |
+-- +-----------------------------------------------------+---------------+
+-- | Norse Mythology                                     |          2016 |
+-- | Interpreter of Maladies                             |          1996 |
+-- | A Hologram for the King: A Novel                    |          2012 |
+-- | The Circle                                          |          2013 |
+-- | The Amazing Adventures of Kavalier & Clay           |          2000 |
+-- | Just Kids                                           |          2010 |
+-- | What We Talk About When We Talk About Love: Stories |          1981 |
+-- | Where I'm Calling From: Selected Stories            |          1989 |
+-- | White Noise                                         |          1985 |
+-- | Cannery Row                                         |          1945 |
+-- | Oblivion: Stories                                   |          2004 |
+-- | Consider the Lobster                                |          2005 |
+-- | Norse Mythology                                     |          2016 |
+-- | Interpreter of Maladies                             |          1996 |
+-- | A Hologram for the King: A Novel                    |          2012 |
+-- | The Circle                                          |          2013 |
+
+ --               cast()
+ -- this is used to change from one data type to other data types
+ -- this cast helps with between when comparing data and to make sure that these data have the
+ -- type
+ -- SELECT name,BIRTHDAYS fomr people where BIRTHDAYS BETWEEN CAST(DATE AS DATETIME) AND CAST(DATE AS DATETIME)
+ --               IN 
+ -- IS AS OR but we do something like the following and this makes our code better 
+ SELECT distinct title, released_year from books1 where released_year IN( 2001,2003,2010 ); 
+-- +-------------------------------------------+---------------+
+-- | title                                     | released_year |
+-- +-------------------------------------------+---------------+
+-- | The Namesake                              |          2003 |
+-- | American Gods                             |          2001 |
+-- | Just Kids                                 |          2010 |
+-- | A Heartbreaking Work of Staggering Genius |          2001 |
+-- | Coraline                                  |          2003 |
+-- +-------------------------------------------+---------------+
+ 
+ -- Not IN
+ -- this takes all the books that are not in 2001, 2003, 2010
+
+ SELECT distinct title, released_year from books1 where released_year NOT IN( 2001,2003,2010 ); 
+-- +-----------------------------------------------------+---------------+
+-- | title                                               | released_year |
+-- +-----------------------------------------------------+---------------+
+-- | Norse Mythology                                     |          2016 |
+-- | Interpreter of Maladies                             |          1996 |
+-- | A Hologram for the King: A Novel                    |          2012 |
+-- | The Circle                                          |          2013 |
+-- | The Amazing Adventures of Kavalier & Clay           |          2000 |
+-- | What We Talk About When We Talk About Love: Stories |          1981 |
+-- | Where I'm Calling From: Selected Stories            |          1989 |
+-- | White Noise                                         |          1985 |
+-- | Cannery Row                                         |          1945 |
+-- | Oblivion: Stories                                   |          2004 |
+-- | Consider the Lobster                                |          2005 |
+-- +-----------------------------------------------------+---------------+
+-- this means that select books that were released in the year greater or equal to two thousand 
+SELECT 
+distinct title, released_year 
+from books1 
+where released_year >=2000 && released_year
+NOT IN( 2000,2002,2010 ); 
+
+-- +-------------------------------------------+---------------+
+-- | title                                     | released_year |
+-- +-------------------------------------------+---------------+
+-- | The Namesake                              |          2003 |
+-- | Norse Mythology                           |          2016 |
+-- | American Gods                             |          2001 |
+-- | A Hologram for the King: A Novel          |          2012 |
+-- | The Circle                                |          2013 |
+-- | A Heartbreaking Work of Staggering Genius |          2001 |
+-- | Coraline                                  |          2003 |
+-- | Oblivion: Stories                         |          2004 |
+-- | Consider the Lobster                      |          2005 |
++-------------------------------------------+---------------+
+             -- using modular can be used to avoid repeatitive 
+             -- the following function will return only odd numbers after 2000
+SELECT 
+distinct title, released_year 
+from books1 
+where released_year >=2000 && released_year %2 !=0; 
+
+-- +-------------------------------------------+---------------+
+-- | title                                     | released_year |
+-- +-------------------------------------------+---------------+
+-- | The Namesake                              |          2003 |
+-- | American Gods                             |          2001 |
+-- | The Circle                                |          2013 |
+-- | A Heartbreaking Work of Staggering Genius |          2001 |
+-- | Coraline                                  |          2003 |
+-- | Consider the Lobster                      |          2005 |
+-- +-------------------------------------------+---------------+
+
+-- CASE STATEMENTS LOGICAL allows us loop through the data 
+SELECT title, released_year,
+
+CASE
+    when released_year >=200 then "Modern Lit"
+    ELSE "20th century Lit"
+    End as Genre
+    
+FROM books1;
+
+-- this will give us the following table
+-- +-----------------------------------------------------+---------------+------------+
+-- | title                                               | released_year | Genre      |
+-- +-----------------------------------------------------+---------------+------------+
+-- | The Namesake                                        |          2003 | Modern Lit |
+-- | Norse Mythology                                     |          2016 | Modern Lit |
+-- | American Gods                                       |          2001 | Modern Lit |
+-- | Interpreter of Maladies                             |          1996 | Modern Lit |
+-- | A Hologram for the King: A Novel                    |          2012 | Modern Lit |
+
+-- do not put camas between the when and then STATEMENTS
+SELECT  title, stock_quantity, 
+CASE
+    WHEN stock_quantity BETWEEN 0 AND 50 THEN "*"
+    WHEN stock_quantity BETWEEN 51 AND 100 THEN "** "
+    ELSE "***"
+END AS "stock"
+FROM books1; 
+
+-- +-----------------------------------------------------+----------------+-------+
+-- | title                                               | stock_quantity | stock |
+-- +-----------------------------------------------------+----------------+-------+
+-- | The Namesake                                        |             32 | *     |
+-- | Norse Mythology                                     |             43 | *     |
+-- | American Gods                                       |             12 | *     |
+-- | Interpreter of Maladies                             |             97 | **    |
+-- | A Hologram for the King: A Novel                    |            154 | ***   |
+-- | The Circle                                          |             26 | *     |
+-- | The Amazing Adventures of Kavalier & Clay           |             68 | **    |
+-- | Just Kids                                           |             55 | **    |
+-- | A Heartbreaking Work of Staggering Genius           |            104 | ***   |
+-- | Coraline                                            |            100 | **    |
+-- | What We Talk About When We Talk About Love: Stories |             23 | *     |
+-- | Where I'm Calling From: Selected Stories            |             12 | *     |
+
+-- you can make the above statments veryshort as 
+SELECT  title, stock_quantity, 
+CASE
+    WHEN stock_quantity <= 50 THEN "*"
+    WHEN stock_quantity <=100 THEN "** "
+    ELSE "***"
+END AS "stock"
+FROM books1; 
+
+-- +-----------------------------------------------------+----------------+-------+
+-- | title                                               | stock_quantity | stock |
+-- +-----------------------------------------------------+----------------+-------+
+-- | The Namesake                                        |             32 | *     |
+-- | Norse Mythology                                     |             43 | *     |
+-- | American Gods                                       |             12 | *     |
+-- | Interpreter of Maladies                             |             97 | **    |
+-- | A Hologram for the King: A Novel                    |            154 | ***   |
+-- | The Circle                                          |             26 | *     |
+
+        -- Exercises 
+        
+--Evaluate the following...
+
+SELECT 10 != 10; -- 0
+SELECT 15 > 14 && 99 - 5 <= 94; -- 1 
+SELECT 1 IN (5,3) || 9 BETWEEN 8 AND 10; -- 1
+
+-- SELECT ALL BOOKS WRITTEN BEFORE 1980(non inclusive)
+SELECT title, released_year
+FROM books1 WHERE  released_year > 1980 ORDER BY  released_year ; 
+-- +-----------------------------------------------------+---------------+
+-- | title                                               | released_year |
+-- +-----------------------------------------------------+---------------+
+-- | What We Talk About When We Talk About Love: Stories |          1981 |
+-- | What We Talk About When We Talk About Love: Stories |          1981 |
+-- | What We Talk About When We Talk About Love: Stories |          1981 |
+-- | White Noise                                         |          1985 |
+-- | White Noise                                         |          1985 |
+-- | White Noise                                         |          1985 |
+-- | Where I'm Calling From: Selected Stories            |          1989 |
+-- | Where I'm Calling From: Selected Stories            |          1989 |
+-- | Where I'm Calling From: Selected Stories            |          1989 |
+-- | Interpreter of Maladies                             |          1996 |
+-- | Interpreter of Maladies                             |          1996 |
+-- | Interpreter of Maladies                             |          1996 |
+
+-- SELECT ALL BOOKS WRITTEN BY EGGER OR CHABON 
+
+SELECT title, author_fname, author_lname 
+FROM books1 WHERE author_lname = "Eggers" || author_lname = "Chabon"; 
+-- or you can write 
+SELECT title, author_fname, author_lname FROM books1 where author_lname IN("Eggers","Chabon"); 
+-- +-------------------------------------------+--------------+--------------+
+-- | title                                     | author_fname | author_lname |
+-- +-------------------------------------------+--------------+--------------+
+-- | A Hologram for the King: A Novel          | Dave         | Eggers       |
+-- | The Circle                                | Dave         | Eggers       |
+-- | The Amazing Adventures of Kavalier & Clay | Michael      | Chabon       |
+-- | A Heartbreaking Work of Staggering Genius | Dave         | Eggers       |
+-- | A Hologram for the King: A Novel          | Dave         | Eggers       |
+-- | The Circle                                | Dave         | Eggers       |
+-- | The Amazing Adventures of Kavalier & Clay | Michael      | Chabon       |
+-- | A Heartbreaking Work of Staggering Genius | Dave         | Eggers       |
+-- | A Hologram for the King: A Novel          | Dave         | Eggers       |
+-- | The Circle                                | Dave         | Eggers       |
+-- | The Amazing Adventures of Kavalier & Clay | Michael      | Chabon       |
+-- | A Heartbreaking Work of Staggering Genius | Dave         | Eggers       |
+-- +-------------------------------------------+--------------+--------------+
+
+-- SELECT ALL BOOKS WRITTEN BY LAHIRI, PUBLISHED AFTER 2000
+SELECT distinct title,author_fname, author_lname, released_year
+From books1 WHERE author_lname = "LAHIRI" && released_year > 2000; 
+-- +--------------+--------------+--------------+---------------+
+-- | title        | author_fname | author_lname | released_year |
+-- +--------------+--------------+--------------+---------------+
+-- | The Namesake | Jhumpa       | Lahiri       |          2003 |
+-- +--------------+--------------+--------------+---------------+
+
+-- select all books with page counts between 100 and 200
+SELECT title, pages
+FROM books1 where pages BETWEEN  100 AND 200; 
+
+-- +-----------------------------------------------------+-------+
+-- | title                                               | pages |
+-- +-----------------------------------------------------+-------+
+-- | Interpreter of Maladies                             |   198 |
+-- | What We Talk About When We Talk About Love: Stories |   176 |
+-- | Cannery Row                                         |   181 |
+-- | Interpreter of Maladies                             |   198 |
+-- | What We Talk About When We Talk About Love: Stories |   176 |
+-- | Cannery Row                                         |   181 |
+-- | Interpreter of Maladies                             |   198 |
+-- | What We Talk About When We Talk About Love: Stories |   176 |
+-- | Cannery Row                                         |   181 |
+-- +-----------------------------------------------------+-------+
+
+-- SELECT ALL BOKS WHERE THE author_lname starts with a c  or an s
+SELECT 
+title, 
+author_lname,
+author_fname 
+FROM books1 
+where 
+author_lname LIKE "C %" ||
+author_lname LIKE "S%"; 
+
+-- or you can also do this
+SELECT 
+title, 
+author_lname,
+author_fname 
+FROM books1
+WHERE
+  SUBSTR(author_fname,1,1) = "C" OR 
+  SUBSTR(author_fname,1,1) = "S"; 
+  
+  -- Or you can alsos do this
+  SELECT 
+title, 
+author_lname,
+author_fname 
+FROM books1
+WHERE SUBSTR(author_lname,1,1) IN ("C","S"); 
+
+-- +-------------+--------------+--------------+
+-- | title       | author_lname | author_fname |
+-- +-------------+--------------+--------------+
+-- | Just Kids   | Smith        | Patti        |
+-- | Cannery Row | Steinbeck    | John         |
+-- | Just Kids   | Smith        | Patti        |
+-- | Cannery Row | Steinbeck    | John         |
+-- | Just Kids   | Smith        | Patti        |
+-- | Cannery Row | Steinbeck    | John         |
+-- +-------------+--------------+--------------+
+
+-- if title contains stories  print short stories
+-- if just kids and hearbreaking work then print memoir
+-- everthing else print novel
+
+SELECT 
+title, 
+author_lname, 
+CASE
+   WHEN title Like "%stories%" then "short stories"
+   WHEN title = " just kids" && title ="A heartbreaking work" then "memoir"
+   ELSE "NOVEL"
+END AS "TYPE"
+FROM books1; 
+
+-- 
+
+-- +-----------------------------------------------------+----------------+---------------+
+-- | title                                               | author_lname   | TYPE          |
+-- +-----------------------------------------------------+----------------+---------------+
+-- | The Namesake                                        | Lahiri         | NOVEL         |
+-- | Norse Mythology                                     | Gaiman         | NOVEL         |
+-- | American Gods                                       | Gaiman         | NOVEL         |
+-- | Interpreter of Maladies                             | Lahiri         | NOVEL         |
+-- | A Hologram for the King: A Novel                    | Eggers         | NOVEL         |
+-- | The Circle                                          | Eggers         | NOVEL         |
+-- | The Amazing Adventures of Kavalier & Clay           | Chabon         | NOVEL         |
+-- | Just Kids                                           | Smith          | NOVEL         |
+-- | A Heartbreaking Work of Staggering Genius           | Eggers         | NOVEL         |
+-- | Coraline                                            | Gaiman         | NOVEL         |
+-- | What We Talk About When We Talk About Love: Stories | Carver         | short stories |
+-- | Where I'm Calling From: Selected Stories            | Carver         | short stories |
+-- | White Noise                                         | DeLillo        | NOVEL
+     
+     
+-- print the following
+
+SELECT author_fname, author_lname,
+ CASE
+ WHEN COUNT(*) = 1 THEN "book"
+ ELSE CONCAT(COUNT(*), " ","books")
+ END AS "COUT"
+ FROM books1 GROUP BY author_lname, author_fname;
+ 
+-- THIS IS THE RESULT THE YOU GET
++--------------+----------------+---------+
+| author_fname | author_lname   | COUT    |
++--------------+----------------+---------+
+| Raymond      | Carver         | 6 books |
+| Michael      | Chabon         | 3 books |
+| Don          | DeLillo        | 3 books |
+| Dave         | Eggers         | 9 books |
+| David        | Foster Wallace | 6 books |
+| Neil         | Gaiman         | 9 books |
+| Jhumpa       | Lahiri         | 6 books |
+| Patti        | Smith          | 3 books |
+| John         | Steinbeck      | 3 books |
++--------------+----------------+---------+
