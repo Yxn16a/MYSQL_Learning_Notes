@@ -1,0 +1,357 @@
+
+CREATE TABLE customers(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    email VARCHAR(100)
+);
+
+CREATE TABLE orders(
+    -- this is important becasue it takes away the ambiguity; 
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_date DATE,
+    amount DECIMAL(8,2),
+    -- this is a colum that will store the reference ids
+    customer_id INT,
+    -- foreign key(name of the colum )  name of table(colums)
+    FOREIGN KEY(customer_id) REFERENCES customers(id)
+    ON DELETE cascade -- this means when the customer is deleted then his or her order will also be deleted
+    
+);
+
+
+INSERT INTO customers (first_name, last_name, email) 
+VALUES ('Boy', 'George', 'george@gmail.com'),
+       ('George', 'Michael', 'gm@gmail.com'),
+       ('David', 'Bowie', 'david@gmail.com'),
+       ('Blue', 'Steele', 'blue@gmail.com'),
+       ('Bette', 'Davis', 'bette@aol.com');
+       
+INSERT INTO orders (order_date, amount, customer_id)
+VALUES ('2016/02/10', 99.99, 1),
+       ('2017/11/11', 35.50, 1),
+       ('2014/12/12', 800.67, 2),
+       ('2015/01/03', 12.50, 2),
+       ('1999/04/11', 450.25, 5);
+
+
+
+
+-- Relational data
+-- working with cutomer 
+SELECT* FROM customers, orders where customers.id = orders.customer_id; 
+mysql> SELECT* FROM customers, orders where customers.id = orders.customer_id;
+-- +----+------------+-----------+------------------+----+------------+--------+-------------+
+-- | id | first_name | last_name | email            | id | order_date | amount | customer_id |
+-- +----+------------+-----------+------------------+----+------------+--------+-------------+
+-- |  1 | Boy        | George    | george@gmail.com |  1 | 2016-02-10 |  99.99 |           1 |
+-- |  1 | Boy        | George    | george@gmail.com |  2 | 2017-11-11 |  35.50 |           1 |
+-- |  2 | George     | Michael   | gm@gmail.com     |  3 | 2014-12-12 | 800.67 |           2 |
+-- |  2 | George     | Michael   | gm@gmail.com     |  4 | 2015-01-03 |  12.50 |           2 |
+-- |  5 | Bette      | Davis     | bette@aol.com    |  5 | 1999-04-11 | 450.25 |           5 |
+-- +----+------------+-----------+------------------+----+------------+--------+-------------+
+-- the obove table we  get the orders of each of the 
+-- Implicity : joining table  according to their commonarities
+--Explicity: joining using join 
+
+-- this is like creating a union of the table based of a condition
+SELECT* FROM customers
+JOIN orders
+Where customers.id = orders.customer_id;
+-- on statments is comparing the foreigner key and the refrecence data to the key
+-- we get the same result above by using explicity join 
+-- ----+------------+-----------+------------------+----+------------+--------+-------------+
+-- | id | first_name | last_name | email            | id | order_date | amount | customer_id |
+-- +----+------------+-----------+------------------+----+------------+--------+-------------+
+-- |  1 | Boy        | George    | george@gmail.com |  1 | 2016-02-10 |  99.99 |           1 |
+-- |  1 | Boy        | George    | george@gmail.com |  2 | 2017-11-11 |  35.50 |           1 |
+-- |  2 | George     | Michael   | gm@gmail.com     |  3 | 2014-12-12 | 800.67 |           2 |
+-- |  2 | George     | Michael   | gm@gmail.com     |  4 | 2015-01-03 |  12.50 |           2 |
+-- |  5 | Bette      | Davis     | bette@aol.com    |  5 | 1999-04-11 | 450.25 |           5 |
+-- +----+------------+-----------+------------------+----+------------+--------+-------------+
+
+-- LET US FIND A BIG SPENDER IN OUR TABLE
+-- here you are going to group by orders of the customer in one giant row and then sum them
+SELECT 
+first_name, 
+last_name,  
+SUM(amount) as "TotalSpent"
+FROM customers
+JOIN orders
+Where customers.id = orders.customer_id
+GROUP BY orders.customer_id;
+-- +------------+-----------+------------+
+-- | first_name | last_name | TotalSpent |
+-- +------------+-----------+------------+
+-- | Boy        | George    |     135.49 |
+-- | George     | Michael   |     813.17 |
+-- | Bette      | Davis     |     450.25 |
+-- +------------+-----------+------------+
+
+-- then we can actual order the item with  from the highese spender to the smallest spender
+
+SELECT 
+first_name, 
+last_name,  
+SUM(amount) as "TotalSpent"
+FROM customers
+JOIN orders
+Where customers.id = orders.customer_id
+GROUP BY orders.customer_id
+ORDER BY TotalSpent DESC; 
+
+-- +------------+-----------+------------+
+-- | first_name | last_name | TotalSpent |
+-- +------------+-----------+------------+
+-- | George     | Michael   |     813.17 |
+-- | Bette      | Davis     |     450.25 |
+-- | Boy        | George    |     135.49 |
+-- +------------+-----------+------------+
+
+-- LEFT JOIN 
+-- takes the union and intersection from left if you have customers on the left and orders on the right
+-- then what left join will do is to take all stuff from the left and join that to the intersection
+-- this can be used to check about all users such as you can know which users has purchased a lot from the 
+-- company and send then a than you email
+-- example
+-- this is sayind that go to the customer table and then pick everthing from orders that is smillar to the custormer table
+-- where ids are the same and print those out
+
+SELECT first_name, last_name, order_date, amount
+FROM customers
+Left JOIN orders
+     ON customers.id = orders.customer_id;
+     -- look in this table, you can see those that have a maching ids are printed with all the matches that we specified
+     -- those with no match they print our null. It is usefull to see this information because  you get to see something like 
+     -- who are buying and on how much and who are not buying anyithing like David and Bowie
+-- +------------+-----------+------------+--------+
+-- | first_name | last_name | order_date | amount |
+-- +------------+-----------+------------+--------+
+-- | Boy        | George    | 2016-02-10 |  99.99 |
+-- | Boy        | George    | 2017-11-11 |  35.50 |
+-- | George     | Michael   | 2014-12-12 | 800.67 |
+-- | George     | Michael   | 2015-01-03 |  12.50 |
+-- | Bette      | Davis     | 1999-04-11 | 450.25 |
+-- | David      | Bowie     | NULL       |   NULL |
+-- | Blue       | Steele    | NULL       |   NULL |
++------------+-----------+------------+--------+
+
+-- but null in the table does not look great then we can replace it with zero instead
+
+SELECT 
+first_name, 
+last_name, 
+-- this checks if sum is null and if it is null then this will make null equal to zero
+IFNULL (SUM(amount),0) AS "total_spent"
+FROM customers
+LEFT JOIN orders
+     ON customers.id = orders.customer_id
+     -- you are grouping by customers_ID FROM THE LEFT TABLE 
+GROUP BY customers.id;
+
+-- +------------+-----------+-------------+
+-- | first_name | last_name | total_spent |
+-- +------------+-----------+-------------+
+-- | Boy        | George    |      135.49 |
+-- | George     | Michael   |      813.17 |
+-- | David      | Bowie     |        0.00 |
+-- | Blue       | Steele    |        0.00 |
+-- | Bette      | Davis     |      450.25 |
+-- +------------+-----------+-------------+
+SELECT
+     first_name,
+     last_name,
+     IFNULL (SUM(amount),0) AS "total_spent"
+     FROM customers
+     LEFT JOIN orders
+          ON customers.id = orders.customer_id
+     GROUP BY customers.id;
+ORDER BY total_spent; 
+    
+
+-- RIGHT JOIN IS the same as the left join but it picks all the right table and 
+-- its intersection 
+
+SELECT first_name, last_name, order_date, amount
+FROM customers
+RIGHT JOIN orders
+     ON customers.id = orders.customer_id;
+-- this will give us only customers who have orders because 
+-- +----+------------+-----------+------------------+        
+-- | id | first_name | last_name | email            |   
+-- +----+------------+-----------+------------------+
+-- |  1 | Boy        | George    | george@gmail.com |
+-- |  2 | George     | Michael   | gm@gmail.com     |
+-- |  3 | David      | Bowie     | david@gmail.com  |
+-- |  4 | Blue       | Steele    | blue@gmail.com   |
+-- |  5 | Bette      | Davis     | bette@aol.com    |
+-- +----+------------+-----------+------------------+     
+
+-- if you look to the left table, there i no david or blue on the above table becuase they
+-- not have ids in the orders because their they do not have orders hence they will not appear
+-- in join right table
+-- ------------+-----------+-------------+
+-- | first_name | last_name | total_spent |
+-- +------------+-----------+-------------+
+-- | Boy        | George    |      135.49 |
+-- | George     | Michael   |      813.17 |
+-- | David      | Bowie     |        0.00 |
+-- | Blue       | Steele    |        0.00 |
+-- | Bette      | Davis     |      450.25 |
+-- +------------+-----------+-------------+
+
+-- we can delete the some data now since we inserted cascade keyword in our data
+delete from customers where email = "George@gmail.com";
+
+-- this is gives us three customers because the customer is deleted where his or her emeil was equalt 
+-- to George
+-- left and right join are the same you just have to suitch the orders
+
+--            EXERCISES ON join 
+-- 1 CREATE A TABLE OF STUDENTS AND PAPERS
+-- EACH PAPER IS OWNED BY ONE STUDENT BUT EACH STUDENT CAM HAVE MANY PAPERS
+
+CREATE TABLE students(
+
+id INT AUTO_INCREMENT PRIMARY KEY,
+
+first_name VARCHAR(100)
+
+);
+
+
+CREATE TABLE papers(
+
+title VARCHAR(100), 
+
+grade INT,
+
+student_id  INT,
+
+
+FOREIGN KEY (student_id) REFERENCES students(id)
+ON DELETE cascade
+);
+
+
+
+INSERT INTO students (first_name) VALUES 
+('Caleb'), ('Samantha'), ('Raj'), ('Carlos'), ('Lisa');
+
+INSERT INTO papers (student_id, title, grade ) VALUES
+(1, 'My First Book Report', 60),
+(1, 'My Second Book Report', 75),
+(2, 'Russian Lit Through The Ages', 94),
+(2, 'De Montaigne and The Art of The Essay', 98),
+(4, 'Borges and Magical Realism', 89);
+
+-- Print the following table
+SELECT first_name, title, grade 
+FROM students, papers
+where students.id = papers.student_id
+ORDER BY grade DESC; 
+-- go to first_name then title then grade and pring the smilaritis according to the 
+-- student id
++------------+---------------------------------------+-------+
+| first_name | title                                 | grade |
++------------+---------------------------------------+-------+
+| Samantha   | De Montaigne and The Art of The Essay |    98 |
+| Samantha   | Russian Lit Through The Ages          |    94 |
+| Carlos     | Borges and Magical Realism            |    89 |
+| Caleb      | My Second Book Report                 |    75 |
+| Caleb      | My First Book Report                  |    60 |
++------------+---------------------------------------+-------+
+
+-- inner join
+
+SELECT first_name, title, grade 
+FROM students
+INNER   JOIN papers
+      ON students.id = papers.student_id
+ORDER BY grade DESC; 
+-- +------------+---------------------------------------+-------+
+-- | first_name | title                                 | grade |
+-- +------------+---------------------------------------+-------+
+-- | Samantha   | De Montaigne and The Art of The Essay |    98 |
+-- | Samantha   | Russian Lit Through The Ages          |    94 |
+-- | Carlos     | Borges and Magical Realism            |    89 |
+-- | Caleb      | My Second Book Report                 |    75 |
+-- | Caleb      | My First Book Report                  |    60 |
+-- +------------+---------------------------------------+-------+
+
+SELECT first_name, title, grade
+FROM students
+   LEFT  JOIN papers
+   ON students.id = papers.student_id;
+   -- this is left join it takes all data from student and join then to the intersection with the papers
+   -- table 
+-- +------------+---------------------------------------+-------+
+-- | first_name | title                                 | grade |
+-- +------------+---------------------------------------+-------+
+-- | Caleb      | My First Book Report                  |    60 |
+-- | Caleb      | My Second Book Report                 |    75 |
+-- | Samantha   | Russian Lit Through The Ages          |    94 |
+-- | Samantha   | De Montaigne and The Art of The Essay |    98 |
+-- | Raj        | NULL                                  |  NULL |
+-- | Carlos     | Borges and Magical Realism            |    89 |
+-- | Lisa       | NULL                                  |  NULL |
+-- +------------+---------------------------------------+-------+   
+
+  SELECT first_name, 
+  IFNULL (title, "missing"),
+  IFNULL(grade,0)
+FROM students
+   LEFT  JOIN papers
+   ON students.id = papers.student_id;  
+  -- WE PRINT MISSING WHEN THERE IS NO PAPER AND WE PRINT 0 WHEN STUDENT GOT ZERO  
+--   +------------+---------------------------------------+-----------------+
+-- | first_name | IFNULL (title, "missing")             | IFNULL(grade,0) |
+-- +------------+---------------------------------------+-----------------+
+-- | Caleb      | My First Book Report                  |              60 |
+-- | Caleb      | My Second Book Report                 |              75 |
+-- | Samantha   | Russian Lit Through The Ages          |              94 |
+-- | Samantha   | De Montaigne and The Art of The Essay |              98 |
+-- | Raj        | missing                               |               0 |
+-- | Carlos     | Borges and Magical Realism            |              89 |
+-- | Lisa       | missing                               |               0 |
+-- +------------+---------------------------------------+-----------------+
+
+SELECT first_name, 
+AVG (IFNULL(grade,0)) AS "average"
+FROM students
+   LEFT  JOIN papers
+   ON students.id = papers.student_id
+   GROUP BY  student_id
+   ORDER BY average DESC; 
+   -- we find the average grade and then we order that by average
++------------+---------+
+| first_name | average |
++------------+---------+
+| Samantha   | 96.0000 |
+| Carlos     | 89.0000 |
+| Caleb      | 67.5000 |
+| Raj        |  0.0000 |
+| Lisa       |  0.0000 |
++------------+---------+
+
+SELECT first_name, 
+AVG (IFNULL(grade,0)) AS "average",
+CASE
+    WHEN AVG (IFNULL(grade,0)) >= 75 then "PASSING"
+    ELSE "FAILING"
+END AS "passing_status"
+FROM students
+   LEFT  JOIN papers
+          ON students.id = papers.student_id
+   GROUP BY student_id
+   ORDER BY average DESC; 
+   -- you print the grade of those who are  failing 
+--   +------------+---------+----------------+
+-- | first_name | average | passing_status |
+-- +------------+---------+----------------+
+-- | Samantha   | 96.0000 | PASSING        |
+-- | Carlos     | 89.0000 | PASSING        |
+-- | Caleb      | 67.5000 | FAILING        |
+-- | Lisa       |  0.0000 | FAILING        |
+-- | Raj        |  0.0000 | FAILING        |
+-- +------------+---------+----------------+
