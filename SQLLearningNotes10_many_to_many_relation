@@ -1,0 +1,12 @@
+
+                               -- MANY TO MANY RELATIONAL DATABASE
+ -- example, a book can have many othors and those many authors can have many books
+ -- we can use a union table to connect many data
+ -- assume that we are build  a tv show rating app, we will need to have the user table, the tv shows table
+ -- and the rating table which unit the tv show and the user 
+ 
+ -- reviewers  series and then reviewers
+ 
+ -- reviewers table 
+ CREATE TABLE reviewers (
+ id id)
