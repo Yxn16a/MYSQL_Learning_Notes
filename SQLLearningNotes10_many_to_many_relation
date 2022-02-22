@@ -7,6 +7,208 @@
  
  -- reviewers  series and then reviewers
  
- -- reviewers table 
- CREATE TABLE reviewers (
- id id)
+-- Data that we will use
+
+CREATE TABLE reviewers(
+id INT auto_increment primary KEY, 
+first_name VARCHAR(100),
+last_name VARCHAR(100)
+); 
+
+CREATE TABLE series(
+ id INT auto_increment primary key, 
+ title  VARCHAR(100), 
+ released_year YEAR(4), -- this is year(4) represent a year with four numbers
+ genre VARCHAR(100)
+);
+
+INSERT INTO series (title, released_year, genre) VALUES
+    ('Archer', 2009, 'Animation'),
+    ('Arrested Development', 2003, 'Comedy'),
+    ("Bob's Burgers", 2011, 'Animation'),
+    ('Bojack Horseman', 2014, 'Animation'),
+    ("Breaking Bad", 2008, 'Drama'),
+    ('Curb Your Enthusiasm', 2000, 'Comedy'),
+    ("Fargo", 2014, 'Drama'),
+    ('Freaks and Geeks', 1999, 'Comedy'),
+    ('General Hospital', 1963, 'Drama'),
+    ('Halt and Catch Fire', 2014, 'Drama'),
+    ('Malcolm In The Middle', 2000, 'Comedy'),
+    ('Pushing Daisies', 2007, 'Comedy'),
+    ('Seinfeld', 1989, 'Comedy'),
+    ('Stranger Things', 2016, 'Drama');
+    
+INSERT INTO reviewers (first_name, last_name) VALUES
+    ('Thomas', 'Stoneman'),
+    ('Wyatt', 'Skaggs'),
+    ('Kimbra', 'Masters'),
+    ('Domingo', 'Cortes'),
+    ('Colt', 'Steele'),
+    ('Pinkie', 'Petit'),
+    ('Marlon', 'Crafford');  
+    
+    
+CREATE TABLE reviews (
+id  INT auto_increment PRIMARY key, 
+series_Id INT, 
+reviewer_Id INT, 
+rating DECIMAL(2,1),
+FOREIGN KEY (series_Id) REFERENCES series(id),
+FOREIGN KEY (reviewer_Id ) REFERENCES reviewers(id)   
+); 
+INSERT INTO reviews(series_id, reviewer_id, rating) VALUES
+    (1,1,8.0),(1,2,7.5),(1,3,8.5),(1,4,7.7),(1,5,8.9), 
+    (2,1,8.1),(2,4,6.0),(2,3,8.0),(2,6,8.4),(2,5,9.9),
+    (3,1,7.0),(3,6,7.5),(3,4,8.0),(3,3,7.1),(3,5,8.0),
+    (4,1,7.5),(4,3,7.8),(4,4,8.3),(4,2,7.6),(4,5,8.5),
+    (5,1,9.5),(5,3,9.0),(5,4,9.1),(5,2,9.3),(5,5,9.9),
+    (6,2,6.5),(6,3,7.8),(6,4,8.8),(6,2,8.4),(6,5,9.1),
+    (7,2,9.1),(7,5,9.7),(8,4,8.5),(8,2,7.8),(8,6,8.8),
+    (8,5,9.3),(9,2,5.5),(9,3,6.8),(9,4,5.8),(9,6,4.3),
+    (9,5,4.5),(10,5,9.9),(13,3,8.0),(13,4,7.2),(14,2,8.5),
+    (14,3,8.9),(14,4,8.9);
+    
+    
+    
+-- many to many relationship
+-- this is common data search
+-- for example is this type of data we many have data
+-- where we have authors of the a single books but those authors have other books too
+-- lets say:
+-- you can have three tables that are connected example of that is when one is reviewing 
+-- movies or tv shows
+-- there will be a movie table
+-- then thre will be reviewers table
+-- then there will be reviews table that connect all of the things together
+
+-- show the series that have been rated
+SELECT title, rating From series
+JOIN reviews
+      ON series.id = reviews.series_Id;
+
+-- +----------------------+--------+
+-- | title                | rating |
+-- +----------------------+--------+
+-- | Archer               |    8.0 |
+-- | Archer               |    7.5 |
+-- | Archer               |    8.5 |
+-- | Archer               |    7.7 |
+-- | Archer               |    8.9 |
+-- | Arrested Development |    8.1 |
+-- | Arrested Development |    6.0 |
+
+-- print the title with their average ratings 
+SELECT title,AVG(rating) as "AverageRating" FROM series
+JOIN reviews
+     ON series.id = reviews.series_id
+GROUP BY series.id   
+ORDER BY AVG(rating) DESC; 
+
+-- +----------------------+---------------+
+-- | title                | AverageRating |
+-- +----------------------+---------------+
+-- | Halt and Catch Fire  |       9.90000 |
+-- | Fargo                |       9.40000 |
+-- | Breaking Bad         |       9.36000 |
+-- | Stranger Things      |       8.76667 |
+-- | Freaks and Geeks     |       8.60000 |
+-- | Curb Your Enthusiasm |       8.12000 |
+-- | Archer               |       8.12000 |
+-- | Arrested Development |       8.08000 |
+ 
+-- print out the first_name and the last_name of the reviewer and the rating they
+-- gave to the show or to the movie
+
+SELECT  first_name, last_name, rating FROM reviewers
+JOIN reviews
+     ON reviewers.id = reviews.reviewer_Id;  
+
+SELECT distinct title FROM series
+LEFT JOIN reviews
+    ON series.id = reviews.series_id 
+ WHERE rating is null;  
+-- left join is useful when we want to see where we do not have an overlap 
+-- +-----------------------+
+-- | title                 |
+-- +-----------------------+
+-- | Malcolm In The Middle |
+-- | Pushing Daisies       |
+-- | Archer                |
+
+-- now find gnre and their average reviews
+
+SELECT genre, ROUND (AVG(rating),2) as "AverageRating" FROM series
+JOIN reviews 
+      ON series.id = reviews.series_id
+    GROUP BY genre; 
+    
+-- +-----------+---------------+
+-- | genre     | AverageRating |
+-- +-----------+---------------+
+-- | Animation |          7.86 |
+-- | Comedy    |          8.16 |
+-- | Drama     |          8.04 |
+-- -- +-----------+---------------+
+SELECT 
+first_name,
+last_name,
+COUNT(rating) as "count", 
+ifnull(min(rating),0) as " min",
+ifnull(max(rating),0 )as " max", 
+ROUND (ifnull (avg(rating),0),2)as "average", 
+CASE
+WHEN COUNT(rating) >= 1 then "ACTIVE"
+ELSE "INACTIVE"
+END as "STATUS"
+FROM  reviewers
+LEFT JOIN reviews
+     ON reviewers.id  = reviews.reviewer_Id
+GROUP BY reviewer_Id
+ORDER BY COUNT DESC; 
+
+-- +------------+-----------+-------+-----+-----+---------+----------+
+-- | first_name | last_name | count | min | max | average | STATUS   |
+-- +------------+-----------+-------+-----+-----+---------+----------+
+-- | Domingo    | Cortes    |    10 | 5.8 | 9.1 |    7.83 | ACTIVE   |
+-- | Colt       | Steele    |    10 | 4.5 | 9.9 |    8.77 | ACTIVE   |
+-- | Wyatt      | Skaggs    |     9 | 5.5 | 9.3 |    7.80 | ACTIVE   |
+-- | Kimbra     | Masters   |     9 | 6.8 | 9.0 |    7.99 | ACTIVE   |
+-- | Thomas     | Stoneman  |     5 | 7.0 | 9.5 |    8.02 | ACTIVE   |
+-- | Pinkie     | Petit     |     4 | 4.3 | 8.8 |    7.25 | ACTIVE   |
+-- | Marlon     | Crafford  |     0 | 0.0 | 0.0 |    0.00 | INACTIVE |
+-- +------------+-----------+-------+-----+-----+---------+----------+
+
+-- IF(rating >=1, "ACTIVE", INACTIVE)
+-- IF( CONDITION, GIVES THIS WHEN TRUE, ELSE)
+
+
+-- join three tables by stating title of the series, rating, then the reviewer
+SELECT 
+title, 
+rating, 
+CONCAT(first_name," ", last_name) as " reviewer"
+FROM reviewers
+INNER JOIN reviews
+     ON reviewers.id = reviews.reviewer_Id
+INNER JOIN series
+     ON series.id = reviews.series_id
+ORDER BY title; 
+
+-- +----------------------+--------+-----------------+
+-- | title                | rating | reviewer        |
+-- +----------------------+--------+-----------------+
+-- | Archer               |    8.0 | Thomas Stoneman |
+-- | Archer               |    7.7 | Domingo Cortes  |
+-- | Archer               |    8.5 | Kimbra Masters  |
+-- | Archer               |    7.5 | Wyatt Skaggs    |
+-- | Archer               |    8.9 | Colt Steele     |
+-- | Arrested Development |    8.1 | Thomas Stoneman |
+-- | Arrested Development |    6.0 | Domingo Cortes  |
+-- | Arrested Development |    8.0 | Kimbra Masters  |
+-- | Arrested Development |    8.4 | Pinkie Petit    |
+-- | Arrested Development |    9.9 | Colt Steele     |
+-- | Bob's Burgers        |    7.5 | Pinkie Petit    |
+-- | Bob's Burgers        |    8.0 | Colt Steele     |
+-- | Bob's Burgers        |    7.0 | Thomas Stoneman |
+-- | Bob's Burgers        |    8.0 | Domingo Cortes  |
+
