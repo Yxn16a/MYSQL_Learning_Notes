@@ -1,0 +1,16 @@
+ WORKING WITH SCHEMA DESIGN
+-- WORKING WITH INSTAGRAM DATA
+-- INSTAGRAM: 
+-- we need to store likes 
+-- we need to store hashtags
+-- we will store comments
+-- we will store followers and following
+
+-- To crone instagram:
+
+-- we will store users
+-- coments
+-- hashtags
+-- photos
+-- likes
+-- relationship between the users
