@@ -1,0 +1,98 @@
+CREATE TABLE users(
+id INTEGER AUTO_INCREMENT PRIMARY KEY, 
+username VARCHAR(255) UNIQUE NOT NULL,   -- to make sure there are no maching user name 
+created_at TIMESTAMP DEFAULT NOW()
+);
+-- we can now insert the data in our table 
+INSERT INTO users(username) VALUES
+('BlueTheCat'),
+('CharlieBrown'),
+('ColtSteele'); 
+
+CREATE TABLE PHOTO(
+id INTEGER  AUTO_INCREMENT PRIMARY KEY,
+image_url  VARCHAR(255) NOT NULL,   
+user_id     INTEGER NOT NULL,  
+created_at    TIMESTAMP DEFAULT NOW(),
+FOREIGN KEY(user_id) REFERENCES users(id)    
+);
+INSERT INTO PHOTO(image_url, user_id) VALUES
+('/alskjd76',1),
+('/lkajsd98',2),
+('/alskjd',2 );
+
+CREATE TABLE comments(
+    id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL, 
+    comment_text VARCHAR(255) NOT NULL,
+    user_id INTEGER NOT NULL, 
+    PHOTO_Id INTEGER NOT NULL, 
+    created_at TIMESTAMP DEFAULT NOW(),
+    FOREIGN KEY (PHOTO_Id) REFERENCES PHOTO (id), 
+    FOREIGN KEY(user_id) REFERENCES users (id)
+);
+
+INSERT INTO comments(comment_text, user_id, PHOTO_Id) VALUES
+('Meow',1,2), -- this means that there is a user whose id 1 commented to the 2nd photo 
+('Amazing Shot!',3,2),
+('Meow',2,1);
+
+CREATE TABLE likes(
+user_id INTEGER NOT NULL,
+photo_id INTEGER NOT NULL, 
+created_at TIMESTAMP DEFAULT NOW(), 
+FOREIGN KEY(user_id) REFERENCES users(id), 
+FOREIGN KEY(photo_id) REFERENCES PHOTO(id),
+PRIMARY KEY (user_id, photo_id) -- this allows us to not have the same likes over and over again	
+);
+
+INSERT INTO likes (user_id, photo_id) 
+VALUES
+(1,2),
+(2,1),
+(1,3),
+(3,3); 
+
+CREATE TABLE follows(
+	follower_id INTEGER NOT NULL,
+	followee_id INTEGER NOT NULL,
+	created_at TIMESTAMP DEFAULT NOW(), 
+	FOREIGN KEY(followee_id) REFERENCES users(id), 
+	FOREIGN KEY(follower_id) REFERENCES users(id), 
+	PRIMARY KEY(follower_id, followee_id) -- one user can follow each other once not more than twice
+);
+
+INSERT INTO follows (follower_id, followee_id) 
+VALUES
+(1,2),
+(1,3),
+(3,1),
+(2,3); 
+
+CREATE TABLE tags(
+id INTEGER AUTO_INCREMENT PRIMARY KEY, 
+tag_name VARCHAR(255) UNIQUE, 
+created TIMESTAMP DEFAULT NOW()
+);
+
+INSERT INTO tags (tag_name) 
+VALUES
+('adorable'),
+('cute'), 
+('sunrise');
+
+
+CREATE TABLE photo_tags(
+photo_id INTEGER NOT NULL, 
+tag_id INTEGER NOT NULL, 
+FOREIGN KEY(photo_id) REFERENCES PHOTO(id), 
+FOREIGN KEY(tag_id) REFERENCES tags(id), 
+PRIMARY KEY(photo_id,tag_id) -- to limit the tag to one photo
+); 
+
+INSERT INTO photo_tags (photo_id, tag_id)
+VALUES
+(1,1),
+(1,2),
+(2,3),
+(3,2);
+
